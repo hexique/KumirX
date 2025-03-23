@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 root = tk.Tk()
-root.title('KumirX')
+root.title('KumirEditor')
 root.geometry('1000x800')
 photo = tk.PhotoImage(file = 'icon.ico')
 root.iconphoto(True,photo)
@@ -16,10 +16,10 @@ keywords = {
             'закрасить\nвниз\n': 's ',
             'закрасить\nвправо\n': 'd ',
 
-            'вверх\n': 'w ',
-            'влево\n': 'a ',
-            'вниз\n': 's ',
-            'вправо\n': 'd ',
+            'вверх\n': 'ww ',
+            'влево\n': 'aw ',
+            'вниз\n': 'sw ',
+            'вправо\n': 'dw ',
 
             'использовать Робот\nалг\nнач\n': '',
             'кон': '',
@@ -69,11 +69,6 @@ keywords = {
     },
     'kumirx letters': {
         'kumir': {
-            'w ': 'закрасить\nвверх\n',
-            'a ': 'закрасить\nвлево\n',
-            's ': 'закрасить\nвниз\n',
-            'd ': 'закрасить\nвправо\n',
-
             'ww ': 'вверх\n',
             'aw ': 'влево\n',
             'sw ': 'вниз\n',
@@ -84,13 +79,12 @@ keywords = {
             'sd ': 'вниз\n',
             'dd ': 'вправо\n',
 
+            'w ': 'закрасить\nвверх\n',
+            'a ': 'закрасить\nвлево\n',
+            's ': 'закрасить\nвниз\n',
+            'd ': 'закрасить\nвправо\n',
         },         
         'kumirx fullwords': {
-            'w ': 'up ',
-            'a ': 'left ',
-            's ': 'down ',
-            'd ': 'right ',
-
             'ww ': 'upwithout ',
             'aw ': 'leftwithout ',
             'sw ': 'downwithout ',
@@ -100,13 +94,13 @@ keywords = {
             'ad ': 'leftdelete ',
             'sd ': 'downdelete ',
             'dd ': 'rightdelete ',
-        }, 
-        'kumirx words': {
+
             'w ': 'up ',
             'a ': 'left ',
             's ': 'down ',
             'd ': 'right ',
-
+        }, 
+        'kumirx words': {
             'ww ': 'upw ',
             'aw ': 'leftw ',
             'sw ': 'downw ',
@@ -116,13 +110,13 @@ keywords = {
             'ad ': 'leftd ',
             'sd ': 'downd ',
             'dd ': 'rightd ',
+
+            'w ': 'up ',
+            'a ': 'left ',
+            's ': 'down ',
+            'd ': 'right ',
         }, 
         'kumirx arrows': {
-            'w ': '↑ ',
-            'a ': '← ',
-            's ': '↓ ',
-            'd ': '→ ',
-
             'ww ': '↑w ',
             'aw ': '←w ',
             'sw ': '↓w ',
@@ -132,15 +126,15 @@ keywords = {
             'ad ': '←d ',
             'sd ': '↓d ',
             'dd ': '→d ',
+    
+            'w ': '↑ ',
+            'a ': '← ',
+            's ': '↓ ',
+            'd ': '→ ',
         }, 
     },
     'kumirx fullwords': {
         'kumir': {
-            'up ': 'закрасить\nвверх\n',
-            'left ': 'закрасить\nвлево\n',
-            'down ': 'закрасить\nвниз\n',
-            'right ': 'закрасить\nвправо\n',
-
             'upwithout ': 'вверх\n',
             'leftwithout ': 'влево\n',
             'downwithout ': 'вниз\n',
@@ -151,13 +145,12 @@ keywords = {
             'downdelete ': 'вниз\n',
             'rightdelete ': 'вправо\n',
 
+            'up ': 'закрасить\nвверх\n',
+            'left ': 'закрасить\nвлево\n',
+            'down ': 'закрасить\nвниз\n',
+            'right ': 'закрасить\nвправо\n',
         },         
         'kumirx letters': {
-            'up ': 'w ',
-            'left ': 'a ',
-            'down ': 's ',
-            'right ': 'd ',
-
             'upwithout ': 'ww ',
             'leftwithout ': 'aw ',
             'downwithout ': 'sw ',
@@ -167,6 +160,11 @@ keywords = {
             'leftdelete ': 'aw ',
             'downdelete ': 'sw ',
             'rightdelete ': 'dw ',
+
+            'up ': 'w ',
+            'left ': 'a ',
+            'down ': 's ',
+            'right ': 'd ',
         }, 
         'kumirx words': {
             'up ': 'up ',
@@ -185,11 +183,6 @@ keywords = {
             'rightdelete ': 'rightd ',
         }, 
         'kumirx arrows': {
-            'up ': '↑ ',
-            'left ': '← ',
-            'down ': '↓ ',
-            'right ': '→ ',
-
             'upwithout ': '↑w ',
             'leftwithout ': '←w ',
             'downwithout ': '↓w ',
@@ -199,15 +192,15 @@ keywords = {
             'leftdelete': '←d ',
             'downdelete ': '↓d ',
             'rightdelete ': '→d ',
+    
+            'up ': '↑ ',
+            'left ': '← ',
+            'down ': '↓ ',
+            'right ': '→ ',
         }, 
     },
     'kumirx words': {
         'kumir': {
-            'up ': 'закрасить\nвверх\n',
-            'left ': 'закрасить\nвлево\n',
-            'down ': 'закрасить\nвниз\n',
-            'right ': 'закрасить\nвправо\n',
-
             'upw ': 'вверх\n',
             'leftw ': 'влево\n',
             'downw ': 'вниз\n',
@@ -218,13 +211,12 @@ keywords = {
             'downd ': 'вниз\n',
             'rightd ': 'вправо\n',
 
+            'up ': 'закрасить\nвверх\n',
+            'left ': 'закрасить\nвлево\n',
+            'down ': 'закрасить\nвниз\n',
+            'right ': 'закрасить\nвправо\n',
         },         
         'kumirx letters': {
-            'up ': 'w ',
-            'left ': 'a ',
-            'down ': 's ',
-            'right ': 'd ',
-
             'upw ': 'ww ',
             'leftw ': 'aw ',
             'downw ': 'sw ',
@@ -234,13 +226,13 @@ keywords = {
             'leftd ': 'aw ',
             'downd ': 'sw ',
             'rightd ': 'dw ',
+    
+            'up ': 'w ',
+            'left ': 'a ',
+            'down ': 's ',
+            'right ': 'd ',
         }, 
         'kumirx fullwords': {
-            'up ': 'up ',
-            'left ': 'left ',
-            'down ': 'down ',
-            'right ': 'right ',
-
             'upw ': 'upwithout ',
             'leftw ': 'leftwithout ',
             'downw ': 'downwithout ',
@@ -250,13 +242,13 @@ keywords = {
             'leftd ': 'leftdelete ',
             'downd ': 'downdelete ',
             'rightd ': 'rightdelete ',
+
+            'up ': 'up ',
+            'left ': 'left ',
+            'down ': 'down ',
+            'right ': 'right ',
         }, 
         'kumirx arrows': {
-            'up ': '↑ ',
-            'left ': '← ',
-            'down ': '↓ ',
-            'right ': '→ ',
-
             'upw ': '↑w ',
             'leftw ': '←w ',
             'downw ': '↓w ',
@@ -266,15 +258,15 @@ keywords = {
             'leftd ': '←d ',
             'downd ': '↓d ',
             'rightd ': '→d ',
+
+            'up ': '↑ ',
+            'left ': '← ',
+            'down ': '↓ ',
+            'right ': '→ ',
         }, 
     },
     'kumirx arrows': {
         'kumir': {
-            '↑ ': 'вверх\nзакрасить\n',
-            '← ': 'влево\nзакрасить\n',
-            '↓ ': 'вниз\nзакрасить\n',
-            '→ ': 'вправо\nзакрасить\n',
-
             '↑w ': 'вверх\n',
             '←w ': 'влево\n',
             '↓w ': 'вниз\n',
@@ -285,13 +277,12 @@ keywords = {
             '↓d ': 'вниз\n',
             '→d ': 'вправо\n',
 
+            '↑ ': 'вверх\nзакрасить\n',
+            '← ': 'влево\nзакрасить\n',
+            '↓ ': 'вниз\nзакрасить\n',
+            '→ ': 'вправо\nзакрасить\n',
         },         
         'kumirx letters': {
-            '↑ ': 'w ',
-            '← ': 'a ',
-            '↓ ': 's ',
-            '→ ': 'd ',
-
             '↑w ': 'ww ',
             '←w ': 'aw ',
             '↓w ': 'sw ',
@@ -301,13 +292,13 @@ keywords = {
             '←d ': 'aw ',
             '↓d ': 'sw ',
             '→d ': 'dw ',
+    
+            '↑ ': 'w ',
+            '← ': 'a ',
+            '↓ ': 's ',
+            '→ ': 'd ',
         }, 
         'kumirx fullwords': {
-            '↑ ': 'up ',
-            '← ': 'left ',
-            '↓ ': 'down ',
-            '→ ': 'right ',
-
             '↑w ': 'upwithout ',
             '←w ': 'leftwithout ',
             '↓w ': 'downwithout ',
@@ -317,13 +308,13 @@ keywords = {
             '←d ': 'leftdelete ',
             '↓d ': 'downdelete ',
             '→d ': 'rightdelete ',
-        }, 
-        'kumirx words': {
+
             '↑ ': 'up ',
             '← ': 'left ',
             '↓ ': 'down ',
             '→ ': 'right ',
-
+        }, 
+        'kumirx words': {
             '↑w ': 'upw ',
             '←w ': 'leftw ',
             '↓w ': 'downw ',
@@ -333,6 +324,11 @@ keywords = {
             '←d': 'leftd ',
             '↓d ': 'downd ',
             '→d ': 'rightd ',
+            
+            '↑ ': 'up ',
+            '← ': 'left ',
+            '↓ ': 'down ',
+            '→ ': 'right ',
         }, 
     },
 }
@@ -393,6 +389,10 @@ def settings():
 
     settings_root.mainloop()
 
+def codeupd():
+    global result
+    result = code.get('1.0',tk.END)
+
 pointer = tk.Canvas(root, bg='red', highlightthickness=0, borderwidth=0, width=20, height=20)
 pointer.place(x = pos[0] * 20, y = pos[1] * 20)
 
@@ -401,6 +401,7 @@ code.place(x=740,y=0)
 
 tk.Button(root,text='Copy', bg='#1b1b1b', fg='white', command=copy).place(x=10,y=770)
 tk.Button(root,text='Settings', bg='#1b1b1b', fg='white', command=settings).place(x=60,y=770)
+tk.Button(root,text='Update', bg='#1b1b1b', fg='white', command=codeupd).place(x=100,y=770)
 
 def move(x, y, fill):
     global pos, result
@@ -425,6 +426,8 @@ def move(x, y, fill):
         elif x == 1:
             result += 'вправо\n'
         code.insert('1.0',f'{result}\nкон')
+        code.see("end")
+        print(result)
         return
     elif lang == 'kumirx letters':
         if y == -1:
@@ -487,10 +490,8 @@ def move(x, y, fill):
         elif fill is False:
             result += 'd '
     code.insert('1.0',f'{result}')
-
-    print(result)
-
-
+    code.see("end")
+    
     print(pos[0], pos[1])
 
 move(0, 0, None)
