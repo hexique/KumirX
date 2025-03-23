@@ -2,8 +2,10 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from time import sleep
 
+ver = '1.1'
+
 root = tk.Tk()
-root.title('KumirX')
+root.title(f'KumirX {ver}')
 root.geometry('1000x800')
 photo = tk.PhotoImage(file = 'icon.ico')
 root.iconphoto(True,photo)
@@ -39,7 +41,7 @@ def save(text):
         path = file_path
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(text)
-            root.title(f'KumirX - {file_path.split("/")[-1]}')
+            root.title(f'KumirX {ver} - {file_path.split("/")[-1]}')
 
 def openfile():
     global path
@@ -58,7 +60,7 @@ def openfile():
         with open(file_path, "r", encoding="utf-8") as f:
             code.delete('1.0', tk.END)
             code.insert('1.0', f.read())
-            root.title(f'KumirX - {file_path.split("/")[-1]}')
+            root.title(f'KumirX {ver} - {file_path.split("/")[-1]}')
 
 def placeBtns():
     tk.Button(root,text='Run', bg='#1b1b1b', fg='white', command=lambda: run(code.get('1.0',tk.END))).place(x=10,y=770)
