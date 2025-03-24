@@ -6,6 +6,14 @@ Kumir
 <img src="https://docs.altlinux.org/ru-RU/alt-education/10.1/html/alt-education/images/kumir.png" title="Kumir" height="300">
 <img src="preview.png" title="KumirX" height="300">
 
+## Code examples:
+
+All Of these code will display minimalistic Linux Mint logo:\
+```s:4 d:6 w:4 a:2 s:2 a ww:2 a s:3 aw ww:4```\
+```down:4 right:6 up:4 left:2 down:2 left upw:2 left down:3 leftw upw:4```\
+```down:4 right:6 up:4 left:2 down:2 left upwithout:2 left down:3 leftwithout upw:4```\
+```↓:4 →:6 ↑:4 ←:2 ↓:2 ← ↑w:2 ← ↓:3 ←w ↑w:4```
+
 ## Shortcuts in `gen.py`
 
 `WASD` - Move turtle to up, left, down, right\
@@ -47,7 +55,7 @@ Translates your code to selected programm system.
 `scale`, `sc` - Changes scale of one tile (in pixels, default is 20)
 
 ## Operators:
-`:` - Multiplies a command or assign a value to variable. Example:\
+`:` - Multiplies a command or assign a value to variable. Examples:
 
 `s:{value}` - Moves {value} tiles down\
 `scale:{value}` - Assign a tile size to {value} pixels
