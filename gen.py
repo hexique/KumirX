@@ -511,6 +511,4 @@ root.bind("<Alt-a>", lambda event: move(-1, 0, False))
 root.bind("<Alt-s>", lambda event: move(0, 1, False))
 root.bind("<Alt-d>", lambda event: move(1, 0, False))
 
-
-
 root.mainloop()
