@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
+from time import time
 
-__ver__ = '1.2'
+__ver__ = '1.2.1'
+__date__ = '25.03.2025'
 
 root = tk.Tk()
 root.title(f'KumirX {__ver__}')
@@ -120,6 +122,21 @@ letters = {
     'x': 's:2 sw s d ww:2 w ww dw s:2 sw s p dw:2 ww:4 ',
     'y': 's:3 sw d:2 w:2 a w dw w p dw:2 ',
     'z': 'd:2 s a sw a sw s d:3 dw ww:4 ',
+
+    '0': 's:4 d:2 w:4 a p dw:3 ',
+    '1': 's:4 p dw:2 ww:4 ',
+    '2': 'd:2 s:2 a:2 s:2 d:2 p dw:2 ww:4 ',
+    '3': 'd:2 s:2 a:2 s sw d:2 w d dw ww:3 ',
+    '4': 's:2 d:2 w:2 w sw:4 s d dw ww:4 ',
+    '5': 'd:2 s sw s:2 a:2 w ww d a ww p dw:4 ww ',
+    '6': 's:4 d:2 w:2 a w ww d:2 dw ',
+    '7': 'd:2 s:2 a d sw s d dw ww:4 ',
+    '8': 's:4 d:2 w:4 a s sw s dw:3 ww:3 ',
+    '9': 's:2 d:2 s:2 a:2 w ww:3 dw d s d dw ww ',
+
+    '-': 'dw:4 ',
+
+
 }
 
 def copy():
@@ -129,7 +146,7 @@ def copy():
 
 def save(text, check):
     global path
-    if path != None or check:
+    if path != None and check:
         with open(path, "w", encoding="utf-8") as f:
             f.write(code.get("1.0", tk.END))
         return
@@ -187,17 +204,19 @@ placeBtns()
 code = tk.Text(root, width=32, height=50, bg='#1b1b1b', fg='white', insertbackground='white')
 code.place(x=740,y=0)
 
-# ← ↑ → ↓
+# ←↑→↓
 
 def run(code, resetpos):
     global scale, pointer, pos, cooldown, color
-    tk.Canvas(root, width=740, height=760, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
-    pointer = tk.Canvas(root, bg='red', highlightthickness=0, borderwidth=0, width=scale, height=scale)
-    pointer.place(x = pos[0] * 20, y = pos[1] * 20)
     if resetpos: 
+        tk.Canvas(root, width=740, height=760, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
         pos = [0] * 2
+        color = 'white'
+        scale = 20
         x = 0
         y = 0
+    pointer = tk.Canvas(root, bg='red', highlightthickness=0, borderwidth=0, width=scale, height=scale)
+    pointer.place(x = pos[0] * 20, y = pos[1] * 20)
     fill = False
     for command in ' '.join(code.split('\n')).split():
 
@@ -230,6 +249,10 @@ def run(code, resetpos):
             # pos = [int(command.split(':')[1]), int(command.split(':')[-1])]
             print(int(command.split(':')[1]) - pos[0], int(command.split(':')[-1]) - pos[1], None, color)
             pos = [int(command.split(':')[1]), int(command.split(':')[-1])]
+            continue
+
+        if command.split(':')[0].lower() in ('pointercolor', 'pointercol', 'pcol', 'pc'):
+            pointer['bg'] = command.split(':')[-1]
             continue
 
         if command.split(':')[0].lower() in ('w', 'up', '↑'):
@@ -274,7 +297,7 @@ def run(code, resetpos):
 def move(x, y, fill, color):
     global pos
     if fill:
-        tk.Canvas(root, bg=color, highlightthickness=0, borderwidth=0, width=scale, height=scale).place(x = pos[0] * scale, y = pos[1] * scale)
+        root.after(cooldown, tk.Canvas(root, bg=color, highlightthickness=0, borderwidth=0, width=scale, height=scale).place(x = pos[0] * scale, y = pos[1] * scale))
     elif fill == False:
         tk.Canvas(root, bg='#1b1b1b', highlightthickness=0, borderwidth=0, width=scale, height=scale).place(x = pos[0] * scale, y = pos[1] * scale)
     pos[0] += x
