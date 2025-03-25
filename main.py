@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from time import time
+import math
 
-__ver__ = '1.2.1'
+__ver__ = '1.3'
 __date__ = '25.03.2025'
 
 root = tk.Tk()
@@ -16,10 +17,13 @@ scale = 20
 cooldown = 0
 path = None
 color = 'white'
-
+start = time()
+item = 0
 pos = [0, 0]
 
 keywords = {
+    ':': '|',
+
     'updelete ': 'вверх\n',
     'leftdelete ': 'влево\n',
     'downdelete ': 'вниз\n',
@@ -55,6 +59,9 @@ keywords = {
     'down ': 'вниз\nзакрасить\n',
     'right ': 'вправо\nзакрасить\n',
 
+    'fill ': 'закрасить\n',
+    'paint ': 'закрасить\n',
+
     '↑d ': 'вверх\n',
     '←d ': 'влево\n',
     '↓d ': 'вниз\n',
@@ -85,15 +92,25 @@ keywords = {
     's ': 'вниз\nзакрасить\n',
     'd ': 'вправо\nзакрасить\n',
 
-    'cooldown:': '|',
-    'cd:': '|',
+    'f ': 'закрасить\n',
+    'p ': 'закрасить\n',
 
-    'scale:': '|',
-    'sc:': '|',
+    'cd': '|',
+    'sc': '|',
 
-    'color:': '|',
-    'col:': '|',
-    'c:': '|',
+    'pointercolor': '|',
+    'pointercol': '|',
+    'pcol': '|',
+    'pc': '|',
+
+    'scale': '|',
+    'cooldown': '|',
+
+    'color': '|',
+    'col': '|',
+
+    'c': '|',
+
 }
 letters = {
     'a': 's:4 d ww:2 w ww d s:5 dw:2 ww:5 ',
@@ -207,18 +224,27 @@ code.place(x=740,y=0)
 # ←↑→↓
 
 def run(code, resetpos):
-    global scale, pointer, pos, cooldown, color
+    global scale, pointer, pos, cooldown, color, start, item
     if resetpos: 
-        tk.Canvas(root, width=740, height=760, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
+        start = time()
+        tk.Canvas(root, width=740, height=800, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
         pos = [0] * 2
         color = 'white'
         scale = 20
         x = 0
         y = 0
-    pointer = tk.Canvas(root, bg='red', highlightthickness=0, borderwidth=0, width=scale, height=scale)
-    pointer.place(x = pos[0] * 20, y = pos[1] * 20)
-    fill = False
+        pointer = tk.Canvas(root, bg='red', highlightthickness=0, borderwidth=0, width=scale, height=scale)
+        pointer.place(x = pos[0] * 20, y = pos[1] * 20)
+        fill = False
     for command in ' '.join(code.split('\n')).split():
+
+        if command.split(':')[0].lower() in ('loop', 'for', 'l'):
+            for item in range(int(command.split(':')[1])):
+                print(item)
+                for j in ':'.join(command.split(':')[2::]).split('_'):
+                    print(j)
+                    run(j.replace('%',':'), False)
+            continue
 
         if command.split(':')[0].lower() in ('word', 'wo'):
             temp_code = ''
@@ -247,9 +273,8 @@ def run(code, resetpos):
 
         if command.split(':')[0].lower() in ('set', 'setpos', 'pos', 'sp'):
             # pos = [int(command.split(':')[1]), int(command.split(':')[-1])]
-            print(int(command.split(':')[1]) - pos[0], int(command.split(':')[-1]) - pos[1], None, color)
-            pos = [int(command.split(':')[1]), int(command.split(':')[-1])]
-            continue
+            pos = [eval(command.split(':')[1], globals()), eval(command.split(':')[-1], globals())]
+            x, y, fill = 0, 0, False
 
         if command.split(':')[0].lower() in ('pointercolor', 'pointercol', 'pcol', 'pc'):
             pointer['bg'] = command.split(':')[-1]
@@ -290,9 +315,9 @@ def run(code, resetpos):
                 move(x, y, fill, color)
         else:
             move(x, y, fill, color)
-
-
-    placeBtns()
+    if not resetpos:
+        placeBtns()
+        print(f"Program was executed in {round(time() - start, 4)}s")
 
 def move(x, y, fill, color):
     global pos
@@ -308,5 +333,15 @@ def move(x, y, fill, color):
 
 def wait(x, y, fill, color):
     root.after(cooldown, lambda: move(x, y, fill, color))
+
+root.bind("<F5>", lambda event: run(code.get('1.0', tk.END), True))
+root.bind("<Control-s>", lambda event: save(code.get('1.0', tk.END), True))
+root.bind("<Control-Alt-s>", lambda event: save(code.get('1.0', tk.END), False))
+root.bind("<Control-Shift-s>", lambda event: save(code.get('1.0', tk.END), False))
+
+root.bind("<Control-o>", lambda event: openfile())
+
+
+
 
 root.mainloop()
