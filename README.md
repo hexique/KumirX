@@ -52,10 +52,12 @@ Translates your code to selected programm system.
 ### Other
 `color`, `col`, `c` - Changes a color of trail\
 `cooldown`, `cd` - Adds cooldown between tile paint (broken)\
-`scale`, `sc` - Changes scale of one tile (in pixels, default is 20)
+`scale`, `sc` - Changes scale of one tile (in pixels, default is 20)\
+`word`, `wo` - Displays a word
 
 ## Operators:
 `:` - Multiplies a command or assign a value to variable. Examples:
 
 `s:{value}` - Moves {value} tiles down\
-`scale:{value}` - Assign a tile size to {value} pixels
+`scale:{value}` - Assign a tile size to {value} pixels\
+`word:{word}` - Display a {word} by tiles
