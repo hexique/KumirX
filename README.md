@@ -28,7 +28,7 @@ Translates your code to selected programm system.
 `KumirX letters` - KumirX code with commands as letters WASD. Code example: `s d ww aw`\
 `KumirX fullwords` - KumirX code with commands as words and full arguments. Code example: `down right upwithout leftwithout`\
 `KumirX words` - KumirX code with commands as words and abbreviated arguments. Code example: `down right upw leftw`\
-`KumirX arrows` - KumirX code with commands as arrow symbols (↑←↓→). Code example: `↓ → ↑w ←w`\
+`KumirX arrows` - KumirX code with commands as arrow symbols (↑←↓→). Code example: `↓ → ↑w ←w`
 
 ## Commands:
 ### Moves with paint:
@@ -52,12 +52,16 @@ Translates your code to selected programm system.
 ### Other
 `color`, `col`, `c` - Changes a color of trail\
 `cooldown`, `cd` - Adds cooldown between tile paint (broken)\
+`setpos`, `set`, `pos`, `sp` - Changes a position of turtle\
+`pointercolor`, `pointercol`, `pcol`, `pc` - Changes a color of turtle\
 `scale`, `sc` - Changes scale of one tile (in pixels, default is 20)\
 `word`, `wo` - Displays a word
+
 
 ## Operators:
 `:` - Multiplies a command or assign a value to variable. Examples:
 
 `s:{value}` - Moves {value} tiles down\
 `scale:{value}` - Assign a tile size to {value} pixels\
+`pos:{x}:{y}` - Sets a turtle position to {x}, {y}\
 `word:{word}` - Display a {word} by tiles
