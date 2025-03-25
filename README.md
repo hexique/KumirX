@@ -50,18 +50,33 @@ Translates your code to selected programm system.
 `dd`, `rightd`, `ddelete`, `rightdelete` `→d` - move turtle right and erase this tile
 
 ### Other
-`color`, `col`, `c` - Changes a color of trail\
+#### `color`, `col`, `c` - Changes a color of trail\
+Example: `col:green` - Changes a turtle trail color to green\
+Example №2: `col:#0000ff` - Changes a trail color to #0000ff, or blue
+
 `cooldown`, `cd` - Adds cooldown between tile paint (broken)\
+Example: `cooldown:1000` - cooldown between steps will be 1000ms or 1sec
+
 `setpos`, `set`, `pos`, `sp` - Changes a position of turtle\
+Example: `pos:5:7` - Turtle position will be x: 5, y: 7\
+Example №2: `pos:0.5:17` - Turtle position will be x: 0.5 (a half of tile), y: 17\
+Example №3: `pos:1:math.sin(1)` - Turtle position will be x: 1 y: sinus of number 1, and its equals or 0.84\
+
 `pointercolor`, `pointercol`, `pcol`, `pc` - Changes a color of turtle\
-`scale`, `sc` - Changes scale of one tile (in pixels, default is 20)\
-`word`, `wo` - Displays a word
+Example: `pointercol:cyan` - Changes a color of turtle to cyan (default is 'red')\
+Example №2: `pointercol:#1b1b1b` - Changes a color of turtle to `#1b1b1b` (color of background and this command makes turtle invisible)
 
+`scale`, `sc` - Changes scale of one tile\
+Example: `sc:10` - Tile size changed to 10 pixels (default is 20)\
+Example №2: `sc:1.5` - Tile size changes to 1.5 pixels
 
-## Operators:
-`:` - Multiplies a command or assign a value to variable. Examples:
+`word`, `wo` - Displays a word\
+Example: `word:hello` - Displays a pixel text 'hello'\
+Example №2: `word:hello-world` - Displays a pixel text 'hello world' (hyphen is treated as a space)
 
-`s:{value}` - Moves {value} tiles down\
-`scale:{value}` - Assign a tile size to {value} pixels\
-`pos:{x}:{y}` - Sets a turtle position to {x}, {y}\
-`word:{word}` - Display a {word} by tiles
+`loop`, `for`, `l` - Executes a sequence of commands several times.\
+Example: `for:5:d_sw` - 5 times move diagonaly (use underscore instead of space).\
+Example №2: `for:6:right:5` - Go right 5 times by 6 times (5*6=30).\
+Example №3: `for:7:pos:item:5_p` - Paint an every tile by y from 0 to 7.\
+Example №4: `sc:5for:100:pos%item%(math.sin(item)+5)*5_p` - Draws a sinusoid.
+
