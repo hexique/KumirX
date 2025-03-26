@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from time import time
-import math
+import math, random
 
-__ver__ = '1.3'
-__date__ = '25.03.2025'
+__ver__ = '1.3.1'
+__date__ = '26.03.2025'
 
 root = tk.Tk()
 root.title(f'KumirX {__ver__}')
@@ -12,6 +12,7 @@ root.geometry('1000x800')
 photo = tk.PhotoImage(file = 'icon.ico')
 root.iconphoto(True,photo)
 root.config(background='#1b1b1b')
+langvar = tk.BooleanVar()
 
 scale = 20
 cooldown = 0
@@ -152,7 +153,11 @@ letters = {
     '9': 's:2 d:2 s:2 a:2 w ww:3 dw d s d dw ww ',
 
     '-': 'dw:4 ',
+    '?': 'd:2 s:2 a:2 s sw p dw:4 ww:4 ',
 
+
+}
+functions = {
 
 }
 
@@ -209,13 +214,39 @@ def openfile():
             code.insert('1.0', f.read())
             root.title(f'KumirX {__ver__} - {file_path.split("/")[-1]}')
 
-def placeBtns():
-    tk.Button(root,text='Run', bg='#1b1b1b', fg='white', command=lambda: run(code.get('1.0',tk.END), True)).place(x=10,y=770)
-    tk.Button(root,text='Copy', bg='#1b1b1b', fg='white', command=copy).place(x=50,y=770)
-    tk.Button(root,text='Save', bg='#1b1b1b', fg='white', command=lambda: save(code.get('1.0',tk.END), True)).place(x=100,y=770)
-    tk.Button(root,text='Save as', bg='#1b1b1b', fg='white', command=lambda: save(code.get('1.0',tk.END), False)).place(x=145,y=770)
+def update_settings():
+    if langvar.get():
+        print('turned on')
+    else:
+        print('turned off')
 
-    tk.Button(root,text='Open', bg='#1b1b1b', fg='white', command=openfile).place(x=200,y=770)
+def settings():
+    global langvar
+    settings_root = tk.Toplevel(root)
+    settings_root.title('Settings')
+    settings_root.geometry('500x500')
+    settings_root.config(background='#1b1b1b')
+
+    tk.Label(settings_root, text='Settings', fg='white', bg='#1b1b1b', font=('Arial',30)).place(x=10,y=10)
+    tk.Checkbutton(settings_root, text='Hide buttons', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', variable=langvar, command=update_settings).place(x=10,y=60)
+    settings_root.mainloop()
+
+def placeBtns():
+    if not langvar.get():
+        if root.winfo_height()-30 <0:
+            y = 770
+        else: y = root.winfo_height()-30
+        tk.Button(root,text='Run', bg='#1b1b1b', fg='white', command=lambda: run(code.get('1.0',tk.END), True)).place(x=10,y=y)
+        tk.Button(root,text='Copy', bg='#1b1b1b', fg='white', command=copy).place(x=50,y=y)
+        tk.Button(root,text='Save', bg='#1b1b1b', fg='white', command=lambda: save(code.get('1.0',tk.END), True)).place(x=100,y=y)
+        tk.Button(root,text='Save as', bg='#1b1b1b', fg='white', command=lambda: save(code.get('1.0',tk.END), False)).place(x=145,y=y)
+
+        tk.Button(root,text='Open', bg='#1b1b1b', fg='white', command=openfile).place(x=200,y=y)
+        tk.Button(root,text='Settings', bg='#1b1b1b', fg='white', command=settings).place(x=250,y=y)
+
+def update_widjets(event):
+    code['height'] = root.winfo_height() / 16
+    code['width'] = round((root.winfo_width()-740)/8.125)
 
 placeBtns()
 code = tk.Text(root, width=32, height=50, bg='#1b1b1b', fg='white', insertbackground='white')
@@ -224,10 +255,11 @@ code.place(x=740,y=0)
 # ←↑→↓
 
 def run(code, resetpos):
-    global scale, pointer, pos, cooldown, color, start, item
+    global scale, pointer, pos, cooldown, color, start, item, functions
     if resetpos: 
         start = time()
-        tk.Canvas(root, width=740, height=800, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
+        tk.Canvas(root, width=740, height=root.winfo_height(), bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
+        placeBtns()
         pos = [0] * 2
         color = 'white'
         scale = 20
@@ -246,12 +278,23 @@ def run(code, resetpos):
                     run(j.replace('%',':'), False)
             continue
 
+        if command.split(':')[0].lower() in ('func', 'fun', 'f'):
+            if command.split(':')[1].lower() in functions:
+                run(functions[command.split(':')[1].lower()], False)
+            else:
+                functions[command.split(':')[1].lower()] = ':'.join(command.split(':')[2::]).replace('_',' ')
+                print(functions)
+            continue
+
         if command.split(':')[0].lower() in ('word', 'wo'):
             temp_code = ''
             for i in command.split(':')[-1]:
                 if i in letters:
                     temp_code += letters[i]
                     print(i, temp_code)
+                else:
+                    temp_code += letters['?']
+                    print('unknown letter:', i, temp_code)
             run(temp_code, False)
             print(f'run {command}')
             continue
@@ -264,7 +307,7 @@ def run(code, resetpos):
             continue
 
         if command.split(':')[0].lower() in ('color', 'col', 'c'):
-            color = command.split(':')[-1]
+            color = command.split(':')[-1].replace('item',str(item))
             continue
 
         if command.split(':')[0].lower() in ('cooldown', 'cd'):
@@ -307,7 +350,7 @@ def run(code, resetpos):
         elif command.split(':')[0].lower() in ('dd', 'ddelete', 'rightd', 'rightdelete', '→d'):
             x, y, fill = 1, 0, False
 
-        elif command.split(':')[0].lower() in ('fill', 'f', 'paint', 'p'):
+        elif command.split(':')[0].lower() in ('fill', 'paint', 'p'):
             x, y, fill = 0, 0, True
 
         if ':' in command and not (command.startswith('set') or command.startswith('pos') or command.startswith('sp')):
@@ -338,9 +381,10 @@ root.bind("<F5>", lambda event: run(code.get('1.0', tk.END), True))
 root.bind("<Control-s>", lambda event: save(code.get('1.0', tk.END), True))
 root.bind("<Control-Alt-s>", lambda event: save(code.get('1.0', tk.END), False))
 root.bind("<Control-Shift-s>", lambda event: save(code.get('1.0', tk.END), False))
-
 root.bind("<Control-o>", lambda event: openfile())
+root.bind("<Control-p>", lambda event: settings())
 
+root.bind("<Configure>", update_widjets)
 
 
 
