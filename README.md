@@ -22,10 +22,10 @@ All Of these code will display minimalistic Linux Mint logo:\
 
 ## Shortcuts in `main.py`
 
-`F5` - Run code
-`Ctrl+S` - Save
-`Ctrl+Alt+S` - Save as
-`Ctrl+O` - Open file
+`F5` - Run code\
+`Ctrl+S` - Save\
+`Ctrl+Alt+S` - Save as\
+`Ctrl+O` - Open file\
 `Ctrl+P` - Settings
 
 ## Settings
@@ -89,8 +89,8 @@ Example №3: `for:7:pos:item:5_p` - Paint an every tile by y from 0 to 7.\
 Example №4: `sc:5for:100:pos%item%(math.sin(item)+5)*5_p` - Draws a sinusoid.
 
 `func`, `fun`, `f` - Declarates or induces a function.\.
-Example: `func:go-right:d` - Creates a function, that goes right
+Example: `func:go-right:d` - Creates a function, that goes right\
 Example 1.1: `func:go-right` - Induces a function that we created in example 1
 
-Exmaple №2: `func:square:d:5_s:5_a:5_w:5` - Creates a function, that draws a square 5x5.
+Exmaple №2: `func:square:d:5_s:5_a:5_w:5` - Creates a function, that draws a square 5x5.\
 Exmaple №2.1: `func:square` - Induces a function that draws a square.
