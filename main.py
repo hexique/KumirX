@@ -3,8 +3,8 @@ from tkinter import filedialog, messagebox
 from time import time
 import math, random
 
-__ver__ = '1.3.1'
-__date__ = '26.03.2025'
+__ver__ = '1.3.2'
+__date__ = '27.03.2025'
 
 root = tk.Tk()
 root.title(f'KumirX {__ver__}')
@@ -18,6 +18,7 @@ scale = 20
 cooldown = 0
 path = None
 color = 'white'
+colorbg = '#1b1b1b'
 start = time()
 item = 0
 pos = [0, 0]
@@ -229,6 +230,7 @@ def settings():
 
     tk.Label(settings_root, text='Settings', fg='white', bg='#1b1b1b', font=('Arial',30)).place(x=10,y=10)
     tk.Checkbutton(settings_root, text='Hide buttons', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', variable=langvar, command=update_settings).place(x=10,y=60)
+    
     settings_root.mainloop()
 
 def placeBtns():
@@ -255,11 +257,12 @@ code.place(x=740,y=0)
 # ←↑→↓
 
 def run(code, resetpos):
-    global scale, pointer, pos, cooldown, color, start, item, functions
+    global scale, pointer, pos, cooldown, color, start, item, functions, colorbg
     if resetpos: 
         start = time()
-        tk.Canvas(root, width=740, height=root.winfo_height(), bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
+        tk.Canvas(root, width=740, height=root.winfo_height(), bg=colorbg, highlightthickness=0).place(x=0,y=0)
         placeBtns()
+        functions = {}
         pos = [0] * 2
         color = 'white'
         scale = 20
@@ -323,6 +326,14 @@ def run(code, resetpos):
             pointer['bg'] = command.split(':')[-1]
             continue
 
+        if command.split(':')[0].lower() in ('backgroundcolor', 'backgroundcol', 'bgcol', 'bgcolor', 'bc'):
+            tk.Canvas(root, width=740, height=root.winfo_height(), bg=command.split(':')[-1], highlightthickness=0).place(x=0,y=0)
+            placeBtns()
+            pointercol = pointer['bg']
+            pointer = tk.Canvas(root, bg=pointercol, highlightthickness=0, borderwidth=0, width=scale, height=scale)
+            pointer.place(x = pos[0] * scale, y = pos[1] * scale)
+            continue
+        
         if command.split(':')[0].lower() in ('w', 'up', '↑'):
             x, y, fill = 0, -1, True
         elif command.split(':')[0].lower() in ('a', 'left', '←'):
@@ -355,10 +366,10 @@ def run(code, resetpos):
 
         if ':' in command and not (command.startswith('set') or command.startswith('pos') or command.startswith('sp')):
             for i in range(int(command.split(':')[-1])):
-                move(x, y, fill, color)
+                root.after(cooldown, move(x, y, fill, color), i+1)
         else:
             move(x, y, fill, color)
-    if not resetpos:
+    if resetpos:
         placeBtns()
         print(f"Program was executed in {round(time() - start, 4)}s")
 
