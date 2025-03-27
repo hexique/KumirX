@@ -1,8 +1,6 @@
 # KumirX
 **KumirX** - is an analog of a russian programming system "Кумир" (Kumir). Its like a Turtle pseudo-programming language for russian schools.
 
-Kumir
-
 <img src="https://docs.altlinux.org/ru-RU/alt-education/10.1/html/alt-education/images/kumir.png" title="Kumir" height="300">
 <img src="preview.png" title="KumirX" height="300">
 
@@ -28,7 +26,7 @@ All Of these code will display minimalistic Linux Mint logo:\
 `Ctrl+O` - Open file\
 `Ctrl+P` - Settings
 
-## Settings
+## Settings in gen.py
 ### Programm system
 Translates your code to selected programm system.
 
@@ -37,6 +35,10 @@ Translates your code to selected programm system.
 `KumirX fullwords` - KumirX code with commands as words and full arguments. Code example: `down right upwithout leftwithout`\
 `KumirX words` - KumirX code with commands as words and abbreviated arguments. Code example: `down right upw leftw`\
 `KumirX arrows` - KumirX code with commands as arrow symbols (↑←↓→). Code example: `↓ → ↑w ←w`
+
+## Settings in main.py
+
+`Hide buttons` - Hide all buttons on the bottom (cuz they are so laggy)
 
 ## Commands:
 ### Moves with paint:
