@@ -2,10 +2,12 @@
 
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import math
+import math, random
 
-__ver__ = '1.0'
+__ver__ = '1.4'
 __date__ = '26.03.2025'
+
+graphs = []
 
 root = tk.Tk()
 root.title(f'KxGraph {__ver__}')
@@ -24,8 +26,12 @@ def graph(function):
     x = 0
     for x in range(int(root.winfo_width()/10)):
         try:
-            if eval(function, globals())*10 >= root.winfo_height()-30: continue
-            tk.Canvas(root, width=10, height=10, highlightthickness=0).place(x=x*10,y=eval(function, globals())*10)
+            if eval(function, globals())*10 >= root.winfo_height()-30: 
+                print(eval(function, globals())*10)
+                print(root.winfo_height()-30)
+                continue
+            dot = tk.Canvas(root, width=10, height=10, highlightthickness=0).place(x=x*10,y=eval(function, globals())*10)
+            graphs.append(dot)
         except Exception as e:
             messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}')
             return
