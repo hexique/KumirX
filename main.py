@@ -3,164 +3,165 @@ from tkinter import filedialog, messagebox
 from time import time
 import math, random
 
-__ver__ = '1.3.2'
+__ver__ = '1.4'
 __date__ = '27.03.2025'
 
-root = tk.Tk()
-root.title(f'KumirX {__ver__}')
-root.geometry('1000x800')
-photo = tk.PhotoImage(file = 'icon.ico')
-root.iconphoto(True,photo)
-root.config(background='#1b1b1b')
-langvar = tk.BooleanVar()
+if __name__ == '__main__':
+    root = tk.Tk()
+    root.title(f'KumirX {__ver__}')
+    root.geometry('1000x800')
+    photo = tk.PhotoImage(file = 'icon.ico')
+    root.iconphoto(True,photo)
+    root.config(background='#1b1b1b')
+    langvar = tk.BooleanVar()
 
-scale = 20
-cooldown = 0
-path = None
-color = 'white'
-colorbg = '#1b1b1b'
-start = time()
-item = 0
-pos = [0, 0]
+    scale = 20
+    cooldown = 0
+    path = None
+    color = 'white'
+    colorbg = '#1b1b1b'
+    start = time()
+    item = 0
+    pos = [0, 0]
 
-keywords = {
-    ':': '|',
+    keywords = {
+        ':': '|',
 
-    'updelete ': 'вверх\n',
-    'leftdelete ': 'влево\n',
-    'downdelete ': 'вниз\n',
-    'rightdelete ': 'вправо\n',
+        'updelete ': 'вверх\n',
+        'leftdelete ': 'влево\n',
+        'downdelete ': 'вниз\n',
+        'rightdelete ': 'вправо\n',
 
-    'upwithout ': 'вверх\n',
-    'leftwithout ': 'влево\n',
-    'downwithout ': 'вниз\n',
-    'rightwithout ': 'вправо\n',
+        'upwithout ': 'вверх\n',
+        'leftwithout ': 'влево\n',
+        'downwithout ': 'вниз\n',
+        'rightwithout ': 'вправо\n',
 
-    'wdelete ': 'вверх\n',
-    'adelete ': 'влево\n',
-    'sdelete ': 'вниз\n',
-    'ddelete ': 'вправо\n',
+        'wdelete ': 'вверх\n',
+        'adelete ': 'влево\n',
+        'sdelete ': 'вниз\n',
+        'ddelete ': 'вправо\n',
 
-    'wwithout ': 'вверх\n',
-    'awithout ': 'влево\n',
-    'swithout ': 'вниз\n',
-    'dwithout ': 'вправо\n',
+        'wwithout ': 'вверх\n',
+        'awithout ': 'влево\n',
+        'swithout ': 'вниз\n',
+        'dwithout ': 'вправо\n',
 
-    'upd ': 'вверх\n',
-    'leftd ': 'влево\n',
-    'downd ': 'вниз\n',
-    'rightd ': 'вправо\n',
+        'upd ': 'вверх\n',
+        'leftd ': 'влево\n',
+        'downd ': 'вниз\n',
+        'rightd ': 'вправо\n',
 
-    'upw ': 'вверх\n',
-    'leftw ': 'влево\n',
-    'downw ': 'вниз\n',
-    'rightw ': 'вправо\n',
+        'upw ': 'вверх\n',
+        'leftw ': 'влево\n',
+        'downw ': 'вниз\n',
+        'rightw ': 'вправо\n',
 
-    'up ': 'вверх\nзакрасить\n',
-    'left ': 'влево\nзакрасить\n',
-    'down ': 'вниз\nзакрасить\n',
-    'right ': 'вправо\nзакрасить\n',
+        'up ': 'вверх\nзакрасить\n',
+        'left ': 'влево\nзакрасить\n',
+        'down ': 'вниз\nзакрасить\n',
+        'right ': 'вправо\nзакрасить\n',
 
-    'fill ': 'закрасить\n',
-    'paint ': 'закрасить\n',
+        'fill ': 'закрасить\n',
+        'paint ': 'закрасить\n',
 
-    '↑d ': 'вверх\n',
-    '←d ': 'влево\n',
-    '↓d ': 'вниз\n',
-    '→d ': 'вправо\n',
+        '↑d ': 'вверх\n',
+        '←d ': 'влево\n',
+        '↓d ': 'вниз\n',
+        '→d ': 'вправо\n',
 
-    '↑w ': 'вверх\n',
-    '←w ': 'влево\n',
-    '↓w ': 'вниз\n',
-    '→w ': 'вправо\n',
+        '↑w ': 'вверх\n',
+        '←w ': 'влево\n',
+        '↓w ': 'вниз\n',
+        '→w ': 'вправо\n',
 
-    '↑ ': 'вверх\nзакрасить\n',
-    '← ': 'влево\nзакрасить\n',
-    '↓ ': 'вниз\nзакрасить\n',
-    '→ ': 'вправо\nзакрасить\n',
+        '↑ ': 'вверх\nзакрасить\n',
+        '← ': 'влево\nзакрасить\n',
+        '↓ ': 'вниз\nзакрасить\n',
+        '→ ': 'вправо\nзакрасить\n',
 
-    'wd ': 'вверх\n',
-    'ad ': 'влево\n',
-    'sd ': 'вниз\n',
-    'dd ': 'вправо\n',
+        'wd ': 'вверх\n',
+        'ad ': 'влево\n',
+        'sd ': 'вниз\n',
+        'dd ': 'вправо\n',
 
-    'ww ': 'вверх\n',
-    'aw ': 'влево\n',
-    'sw ': 'вниз\n',
-    'dw ': 'вправо\n',
+        'ww ': 'вверх\n',
+        'aw ': 'влево\n',
+        'sw ': 'вниз\n',
+        'dw ': 'вправо\n',
 
-    'w ': 'вверх\nзакрасить\n',
-    'a ': 'влево\nзакрасить\n',
-    's ': 'вниз\nзакрасить\n',
-    'd ': 'вправо\nзакрасить\n',
+        'w ': 'вверх\nзакрасить\n',
+        'a ': 'влево\nзакрасить\n',
+        's ': 'вниз\nзакрасить\n',
+        'd ': 'вправо\nзакрасить\n',
 
-    'f ': 'закрасить\n',
-    'p ': 'закрасить\n',
+        'f ': 'закрасить\n',
+        'p ': 'закрасить\n',
 
-    'cd': '|',
-    'sc': '|',
+        'cd': '|',
+        'sc': '|',
 
-    'pointercolor': '|',
-    'pointercol': '|',
-    'pcol': '|',
-    'pc': '|',
+        'pointercolor': '|',
+        'pointercol': '|',
+        'pcol': '|',
+        'pc': '|',
 
-    'scale': '|',
-    'cooldown': '|',
+        'scale': '|',
+        'cooldown': '|',
 
-    'color': '|',
-    'col': '|',
+        'color': '|',
+        'col': '|',
 
-    'c': '|',
+        'c': '|',
 
-}
-letters = {
-    'a': 's:4 d ww:2 w ww d s:5 dw:2 ww:5 ',
-    'b': 's:4 d:2 ww w aw w dw w aw d dw:2 ',
-    'c': 's:4 d:2 w ww:3 a d dw:2 ',
-    'd': 's:4 d d ww w:2 w aw d dw:2 ',
-    'e': 's:4 d:2 w ww a w ww d:2 dw ',
-    'f': 's:4 d ww:2 d w aw ww d:2 dw ',
-    'g': 's:4 d:2 w:3 ww a d dw:2 ',
-    'h': 's:4 d ww:2 w ww dw s:5 ww:5 dw:2 ',
-    'i': 's:4 d ww:4 dw ',
-    'j': 'd:2 s aw s:3 a p dw:4 ww:4 ',
-    'k': 's:4 p dw:2 w:2 aw d ww w p dw:2 ',
-    'l': 's:4 d:3 dw ww:4 ',
-    'm': 's:4 d ww:3 d sw d ww d ww s:4 p dw:2 ww:4 ',
-    'n': 's:4 p dw ww:3 d sw d s:2 w:4 p dw:2 ',
-    'o': 's:4 d:2 w:4 a p dw:3 ',
-    'p': 's:4 d ww:2 d w:2 a p dw:3 ',
-    'q': 's:4 d:2 s d a ww:2 w:3 a p dw:4 ',
-    'r': 's:4 p dw:2 w:2 aw d ww w aw p dw:3 ',
-    's': 's:2 d:2 s:2 a:2 p ww:4 dw d:2 dw ',
-    't': 'd:2 a sw s:3 p dw:3 ww:4 ',
-    'u': 's:4 d:2 w:4 p dw:2 ',
-    'v': 's:4 dw d ww w:3 p dw:2 ',
-    'w': 's:4 dw d ww w:3 d sw:4 d ww w:3 p dw:2 ',
-    'x': 's:2 sw s d ww:2 w ww dw s:2 sw s p dw:2 ww:4 ',
-    'y': 's:3 sw d:2 w:2 a w dw w p dw:2 ',
-    'z': 'd:2 s a sw a sw s d:3 dw ww:4 ',
+    }
+    letters = {
+        'a': 's:4 d ww:2 w ww d s:5 dw:2 ww:5 ',
+        'b': 's:4 d:2 ww w aw w dw w aw d dw:2 ',
+        'c': 's:4 d:2 w ww:3 a d dw:2 ',
+        'd': 's:4 d d ww w:2 w aw d dw:2 ',
+        'e': 's:4 d:2 w ww a w ww d:2 dw ',
+        'f': 's:4 d ww:2 d w aw ww d:2 dw ',
+        'g': 's:4 d:2 w:3 ww a d dw:2 ',
+        'h': 's:4 d ww:2 w ww dw s:5 ww:5 dw:2 ',
+        'i': 's:4 d ww:4 dw ',
+        'j': 'd:2 s aw s:3 a p dw:4 ww:4 ',
+        'k': 's:4 p dw:2 w:2 aw d ww w p dw:2 ',
+        'l': 's:4 d:3 dw ww:4 ',
+        'm': 's:4 d ww:3 d sw d ww d ww s:4 p dw:2 ww:4 ',
+        'n': 's:4 p dw ww:3 d sw d s:2 w:4 p dw:2 ',
+        'o': 's:4 d:2 w:4 a p dw:3 ',
+        'p': 's:4 d ww:2 d w:2 a p dw:3 ',
+        'q': 's:4 d:2 s d a ww:2 w:3 a p dw:4 ',
+        'r': 's:4 p dw:2 w:2 aw d ww w aw p dw:3 ',
+        's': 's:2 d:2 s:2 a:2 p ww:4 dw d:2 dw ',
+        't': 'd:2 a sw s:3 p dw:3 ww:4 ',
+        'u': 's:4 d:2 w:4 p dw:2 ',
+        'v': 's:4 dw d ww w:3 p dw:2 ',
+        'w': 's:4 dw d ww w:3 d sw:4 d ww w:3 p dw:2 ',
+        'x': 's:2 sw s d ww:2 w ww dw s:2 sw s p dw:2 ww:4 ',
+        'y': 's:3 sw d:2 w:2 a w dw w p dw:2 ',
+        'z': 'd:2 s a sw a sw s d:3 dw ww:4 ',
 
-    '0': 's:4 d:2 w:4 a p dw:3 ',
-    '1': 's:4 p dw:2 ww:4 ',
-    '2': 'd:2 s:2 a:2 s:2 d:2 p dw:2 ww:4 ',
-    '3': 'd:2 s:2 a:2 s sw d:2 w d dw ww:3 ',
-    '4': 's:2 d:2 w:2 w sw:4 s d dw ww:4 ',
-    '5': 'd:2 s sw s:2 a:2 w ww d a ww p dw:4 ww ',
-    '6': 's:4 d:2 w:2 a w ww d:2 dw ',
-    '7': 'd:2 s:2 a d sw s d dw ww:4 ',
-    '8': 's:4 d:2 w:4 a s sw s dw:3 ww:3 ',
-    '9': 's:2 d:2 s:2 a:2 w ww:3 dw d s d dw ww ',
+        '0': 's:4 d:2 w:4 a p dw:3 ',
+        '1': 's:4 p dw:2 ww:4 ',
+        '2': 'd:2 s:2 a:2 s:2 d:2 p dw:2 ww:4 ',
+        '3': 'd:2 s:2 a:2 s sw d:2 w d dw ww:3 ',
+        '4': 's:2 d:2 w:2 w sw:4 s d dw ww:4 ',
+        '5': 'd:2 s sw s:2 a:2 w ww d a ww p dw:4 ww ',
+        '6': 's:4 d:2 w:2 a w ww d:2 dw ',
+        '7': 'd:2 s:2 a d sw s d dw ww:4 ',
+        '8': 's:4 d:2 w:4 a s sw s dw:3 ww:3 ',
+        '9': 's:2 d:2 s:2 a:2 w ww:3 dw d s d dw ww ',
 
-    '-': 'dw:4 ',
-    '?': 'd:2 s:2 a:2 s sw p dw:4 ww:4 ',
+        '-': 'dw:4 ',
+        '?': 'd:2 s:2 a:2 s sw p dw:4 ww:4 ',
 
 
-}
-functions = {
+    }
+    functions = {
 
-}
+    }
 
 def copy():
     root.clipboard_clear()
@@ -198,7 +199,7 @@ def save(text, check):
 def openfile():
     global path
     confirm = True
-    if path != None:
+    if path is not None:
         confirm = messagebox.askyesnocancel(root.title(), "Unsaved changes detected. Do you want to save?", icon='warning')
         if confirm:
             save(code.get('1.0', tk.END), True)
@@ -224,7 +225,7 @@ def update_settings():
 def settings():
     global langvar
     settings_root = tk.Toplevel(root)
-    settings_root.title('Settings')
+    settings_root.title(f'KumirX {__ver__}')
     settings_root.geometry('500x500')
     settings_root.config(background='#1b1b1b')
 
@@ -250,9 +251,10 @@ def update_widjets(event):
     code['height'] = root.winfo_height() / 16
     code['width'] = round((root.winfo_width()-740)/8.125)
 
-placeBtns()
-code = tk.Text(root, width=32, height=50, bg='#1b1b1b', fg='white', insertbackground='white')
-code.place(x=740,y=0)
+if __name__ == '__main__':
+    placeBtns()
+    code = tk.Text(root, width=32, height=50, bg='#1b1b1b', fg='white', insertbackground='white')
+    code.place(x=740,y=0)
 
 # ←↑→↓
 
@@ -388,15 +390,14 @@ def move(x, y, fill, color):
 def wait(x, y, fill, color):
     root.after(cooldown, lambda: move(x, y, fill, color))
 
-root.bind("<F5>", lambda event: run(code.get('1.0', tk.END), True))
-root.bind("<Control-s>", lambda event: save(code.get('1.0', tk.END), True))
-root.bind("<Control-Alt-s>", lambda event: save(code.get('1.0', tk.END), False))
-root.bind("<Control-Shift-s>", lambda event: save(code.get('1.0', tk.END), False))
-root.bind("<Control-o>", lambda event: openfile())
-root.bind("<Control-p>", lambda event: settings())
+if __name__ == '__main__':
+    root.bind("<F5>", lambda event: run(code.get('1.0', tk.END), True))
+    root.bind("<Control-s>", lambda event: save(code.get('1.0', tk.END), True))
+    root.bind("<Control-Alt-s>", lambda event: save(code.get('1.0', tk.END), False))
+    root.bind("<Control-Shift-s>", lambda event: save(code.get('1.0', tk.END), False))
+    root.bind("<Control-o>", lambda event: openfile())
+    root.bind("<Control-p>", lambda event: settings())
 
-root.bind("<Configure>", update_widjets)
+    root.bind("<Configure>", update_widjets)
 
-
-
-root.mainloop()
+    root.mainloop()
