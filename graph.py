@@ -2,10 +2,9 @@
 
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import math, random
+from main import __ver__, __date__
 
-__ver__ = '1.4'
-__date__ = '26.03.2025'
+import math, random
 
 graphs = []
 
@@ -16,6 +15,9 @@ photo = tk.PhotoImage(file = 'icon.ico')
 root.iconphoto(True,photo)
 root.config(background='#1b1b1b')
 
+step = 1
+offset = 0
+
 def update_widjets(event):
     func.place(x=0,y=root.winfo_height()-20,width=root.winfo_width())
     submit.place(x=root.winfo_width()-69,y=root.winfo_height()-27)
@@ -24,7 +26,11 @@ def update_widjets(event):
 def graph(function):
     global x
     x = 0
-    for x in range(int(root.winfo_width()/10)):
+    while True:
+        x += step
+        print(x)
+        if x > int(root.winfo_width()/10):
+            return
         try:
             if eval(function, globals())*10 >= root.winfo_height()-30: 
                 print(eval(function, globals())*10)
@@ -32,12 +38,48 @@ def graph(function):
                 continue
             dot = tk.Canvas(root, width=10, height=10, highlightthickness=0).place(x=x*10,y=eval(function, globals())*10)
             graphs.append(dot)
+        except ZeroDivisionError:
+            continue
         except Exception as e:
             messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}')
             return
+
         
 def reset():
     tk.Canvas(root, width=root.winfo_width(), height=root.winfo_height()-20, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
+
+def update_settings():
+    apply_btn.place(x=settings_root.winfo_width()-60,y=settings_root.winfo_height()-40)
+
+def apply():
+    global step, offset
+    step = float(step_entry.get()) 
+    offset = float(offset_entry.get())
+    settings_root.destroy()
+
+def settings():
+    global settings_root, apply_btn, step_entry, offset_entry
+    settings_root = tk.Toplevel(root)
+    settings_root.title(f'KxGraph {__ver__}')
+    settings_root.geometry('500x500')
+    settings_root.config(background='#1b1b1b')
+
+    tk.Label(settings_root, text='Settings', fg='white', bg='#1b1b1b', font=('Arial',30)).place(x=10,y=10)
+    tk.Label(settings_root, text='Step: ', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=10,y=60)
+
+    step_entry = tk.Entry(settings_root, width=5, bg='#1b1b1b', fg='white', font=('Arial',10))
+    step_entry.place(x=50,y=60)
+
+    tk.Label(settings_root, text='Offset: ', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=10,y=90)
+
+    offset_entry = tk.Entry(settings_root, width=5, bg='#1b1b1b', fg='white', font=('Arial',10))
+    offset_entry.place(x=50,y=90)
+
+    apply_btn = tk.Button(settings_root, text='Apply', fg='white', bg='#1b1b1b', command=apply)
+    apply_btn.place(x=440,y=460)
+    
+    settings_root.bind("<Configure>", lambda event: update_settings())
+    settings_root.mainloop()
 
 func = tk.Entry(root, bg='#1b1b1b', fg='white', insertbackground='white')
 func.place(x=0,y=780,width=root.winfo_width())
@@ -47,6 +89,24 @@ clear = tk.Button(root, text='Reset', bg='#1b1b1b', fg='white', command=reset)
 submit.place(x=0,y=0)
 
 root.bind("<Configure>", update_widjets)
+
 root.bind("<Return>", lambda event: graph(func.get()))
+root.bind("<F5>", lambda event: graph(func.get()))
+root.bind("<Escape>", lambda event: reset())
+
+
+root.bind("<Control-p>", lambda event: settings())
+root.bind("<Control-o>", lambda event: settings())
+
+menu = tk.Menu(root)  
+scenesMenu = tk.Menu(menu, tearoff=0)
+fileMenu = tk.Menu(menu, tearoff=0)
+fileMenu.add_command(label="Settings",command=settings)
+fileMenu.add_command(label="Reset",command=reset)
+fileMenu.add_command(label="Create graph",command=lambda: graph(func.get()))
+fileMenu.add_command(label="Exit",command=quit)
+menu.add_cascade(label="File", menu=fileMenu)
+
+root.config(menu=menu)
 
 root.mainloop()
