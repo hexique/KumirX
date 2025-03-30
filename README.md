@@ -50,7 +50,8 @@ Translates your code to selected programm system.
 ## Settings in KxGraph
 
 `Step` - The smaller the number, the more accurate. Is a number that is added to x (default value is 1)
-`Offset` - Places the graph down by a certain amount of units
+`Offset` - Places the graph down by a certain amount of units (default value is 0)
+`Index` - Moves x units graph down (default value is 0)
 
 ## Commands:
 ### Moves with paint:
