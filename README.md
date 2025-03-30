@@ -12,13 +12,13 @@ All Of these code will display minimalistic Linux Mint logo:\
 ```down:4 right:6 up:4 left:2 down:2 left upwithout:2 left down:3 leftwithout upw:4```\
 ```↓:4 →:6 ↑:4 ←:2 ↓:2 ← ↑w:2 ← ↓:3 ←w ↑w:4```
 
-## Shortcuts in `gen.py`
+## Shortcuts in KumirEditor (gen.py)
 
 `WASD` - Move turtle to up, left, down, right\
 `Ctrl+WASD` - Move turle without paint\
 `Alt+WASD` - Erase (Don't work in Kumir)
 
-## Shortcuts in `main.py`
+## Shortcuts in KumirX (main.py)
 
 `F5` - Run code\
 `Ctrl+S` - Save\
@@ -26,7 +26,13 @@ All Of these code will display minimalistic Linux Mint logo:\
 `Ctrl+O` - Open file\
 `Ctrl+P` - Settings
 
-## Settings in gen.py
+## Shortcuts in KxGraph (graph.py)
+
+`Enter`, `F5` - Create graph\
+`Ctrl+p`, `Ctrl+O` - Settings\
+`Esc` - Clear
+
+## Settings in KumirEditor
 ### Programm system
 Translates your code to selected programm system.
 
@@ -36,9 +42,14 @@ Translates your code to selected programm system.
 `KumirX words` - KumirX code with commands as words and abbreviated arguments. Code example: `down right upw leftw`\
 `KumirX arrows` - KumirX code with commands as arrow symbols (↑←↓→). Code example: `↓ → ↑w ←w`
 
-## Settings in main.py
+## Settings in KumirX (main.py)
 
 `Hide buttons` - Hide all buttons on the bottom (cuz they are so laggy)
+
+## Settings in KxGraph
+
+`Step` - The smaller the number, the more accurate. Is a number that is added to x (default value is 1)
+`Offset` - Places the graph down by a certain amount of units
 
 ## Commands:
 ### Moves with paint:
