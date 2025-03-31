@@ -29,9 +29,13 @@ All Of these code will display minimalistic Linux Mint logo:\
 ## Shortcuts in KxGraph (graph.py)
 
 `Enter`, `F5` - Create graph\
-`Ctrl+p`, `Ctrl+O` - Settings\
+`Enter` (in settings) - Apply\
+`Ctrl+P`, `Tab` - Settings\
 `Esc` - Clear\
-`Enter` (in settings) - Apply
+`Delete` - Delete graph by index in settings\
+`Ctrl+delete` - Delete last graph\
+`Shift+delete` - Delete first graph\
+`Ctrl+S` - Save graph as file
 
 ## Settings in KumirEditor
 ### Programm system
@@ -49,9 +53,15 @@ Translates your code to selected programm system.
 
 ## Settings in KxGraph
 
-`Step` - The smaller the number, the more accurate. Is a number that is added to x (default value is 1)
-`Offset` - Places the graph down by a certain amount of units (default value is 0)
-`Index` - Moves x units graph down (default value is 0)
+`Step` - The smaller the number, the more accurate. Is a number that is added to x (default value is 1)\
+`Scale` - Scale of one tile (default value is step*10)
+`Offset` - Places the graph down by a certain amount of units (default value is 0)\
+`Offset color` - Color of line at 0 (default value is #2d2d2d)
+`Index` - Moves x units graph down (default value is -1)
+
+`Different color for every graph` - All new graphs will be a different colors\
+`Delete graph after error` - If while drawing graph will be error occured program will delete this graph\
+`Graph switch` - Deletes all graphs before creating new
 
 ## Commands:
 ### Moves with paint:
@@ -83,7 +93,7 @@ Example: `cooldown:1000` - cooldown between steps will be 1000ms or 1sec
 `setpos`, `set`, `pos`, `sp` - Changes a position of turtle\
 Example: `pos:5:7` - Turtle position will be x: 5, y: 7\
 Example №2: `pos:0.5:17` - Turtle position will be x: 0.5 (a half of tile), y: 17\
-Example №3: `pos:1:math.sin(1)` - Turtle position will be x: 1 y: sinus of number 1, and its equals or 0.84\
+Example №3: `pos:1:math.sin(1)` - Turtle position will be x: 1 y: sinus of number 1 (its 0.84)\
 
 `pointercolor`, `pointercol`, `pcol`, `pc` - Changes a color of turtle\
 Example: `pointercol:cyan` - Changes a color of turtle to cyan (default is 'red')\
