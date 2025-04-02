@@ -3,8 +3,8 @@ from tkinter import filedialog, messagebox
 from time import time
 import math, random
 
-__ver__ = '1.5'
-__date__ = '31.03.2025'
+__ver__ = '1.5.1'
+__date__ = '02.04.2025'
 
 if __name__ == '__main__':
     root = tk.Tk()
