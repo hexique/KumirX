@@ -7,6 +7,7 @@ from main import __ver__, __date__
 import math, random
 
 graphs = []
+graphdata = []
 
 root = tk.Tk()
 root.title(f'KxGraph {__ver__}')
@@ -31,7 +32,7 @@ colors = ('#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff')
 def save(text):
     file_path = filedialog.asksaveasfilename(
             initialfile=f"{func.get()}.txt",
-            defaultextension=".kmx",
+            defaultextension=".txt",
             title="Save file",
             filetypes=[("Text file", "*.txt"), ("All files", "*.*")]
     )
@@ -40,11 +41,24 @@ def save(text):
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(text)
 
+def colortable():
+    color_root = tk.Toplevel(root)
+    color_root.title(f'KxGraph {__ver__}')
+    color_root.config(background='#1b1b1b')
+
+    i = 0
+    for data in graphdata:
+        tk.Label(color_root, text=data['color'].lower(), bg=data['color'], justify='left').grid(row=i,column=0)
+        tk.Label(color_root, text=data['function'], bg='#1b1b1b', fg='#ffffff', justify='left').grid(row=i,column=1)
+        i += 1
+
+    color_root.mainloop()
+
 def graph(function):
     global x, audit
     x = 0
     if one_graph_max.get():
-        reset()
+        delete(-1)
     graphs.append([])
     if switch_color.get():
         if len(graphs) > len(colors):
@@ -54,6 +68,7 @@ def graph(function):
     else:
         color = 'white'
     audit += f'Function: {function}\nGraph: {len(graphs)}\nScale: {eval(scale)} ({scale})\nStep: {step}\nOffset: {offset}\nColor: {color}\n\nDifferent color for every graph: {switch_color.get()}\nDelete graph after error: {error_graph.get()}\nGraph switch: {one_graph_max.get()}\n\nDots:\n'
+    graphdata.append({'function': function, 'color': color})
     while True:
         if x > int(root.winfo_width()/10):
             break
@@ -84,18 +99,20 @@ def graph(function):
         
 def reset():
     # tk.Canvas(root, width=root.winfo_width(), height=root.winfo_height()-20, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
-    global graphs, object
+    global graphs, graphdata, object
     for graph in graphs:
         for object in graph:
             object.destroy()
     graphs = []
+    graphdata = []
 
 def delete(index):
-    global graphs, object
+    global graphs, graphdata, object
     if len(graphs) != 0:
         for object in graphs[index]:
             object.destroy()
     graphs.pop(index)
+    graphdata.pop(index)
 
 def update_settings():
     apply_btn.place(x=settings_root.winfo_width()-60,y=settings_root.winfo_height()-40)
@@ -186,7 +203,8 @@ root.bind("<Control-Delete>", lambda event: delete(-1))
 root.bind("<Shift-Delete>", lambda event: delete(0))
 root.bind("<Control-s>", lambda event: save(audit))
 root.bind("<Control-p>", lambda event: settings())
-root.bind("<Shift_L>", lambda event: settings())
+root.bind("<Control-g>", lambda event: colortable())
+root.bind("<Tab>", lambda event: settings())
 
 menu = tk.Menu(root)  
 scenesMenu = tk.Menu(menu, tearoff=0)
