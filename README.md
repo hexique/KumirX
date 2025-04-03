@@ -1,5 +1,5 @@
 # KumirX
-**KumirX** - is an analog of a russian programming system "Кумир" (Kumir). Its like a Turtle pseudo-programming language for russian schools.
+**KumirX** - an analog of a russian programming system "Кумир" (Kumir). Its like a Turtle pseudo-programming language for russian schools.
 
 <img src="https://docs.altlinux.org/ru-RU/alt-education/10.1/html/alt-education/images/kumir.png" title="Kumir" height="300">
 <img src="preview.png" title="KumirX" height="300">
@@ -12,13 +12,11 @@ All Of these code will display minimalistic Linux Mint logo:\
 ```down:4 right:6 up:4 left:2 down:2 left upwithout:2 left down:3 leftwithout upw:4```\
 ```↓:4 →:6 ↑:4 ←:2 ↓:2 ← ↑w:2 ← ↓:3 ←w ↑w:4```
 
-## Shortcuts in KumirEditor (gen.py)
+## Settings
 
-`WASD` - Move turtle to up, left, down, right\
-`Ctrl+WASD` - Move turle without paint\
-`Alt+WASD` - Erase (Don't work in Kumir)
+`Hide buttons` - Hide all buttons on the bottom (cuz they are so laggy)
 
-## Shortcuts in KumirX (main.py)
+## Shortcuts
 
 `F5` - Run code\
 `Ctrl+S` - Save\
@@ -26,44 +24,7 @@ All Of these code will display minimalistic Linux Mint logo:\
 `Ctrl+O` - Open file\
 `Ctrl+P` - Settings
 
-## Shortcuts in KxGraph (graph.py)
-
-`Enter`, `F5` - Create graph\
-`Enter` (in settings) - Apply\
-`Ctrl+P`, `Tab` - Settings\
-`Esc` - Clear\
-`Delete` - Delete graph by index in settings\
-`Ctrl+delete` - Delete last graph\
-`Shift+delete` - Delete first graph\
-`Ctrl+S` - Save graph as file
-
-## Settings in KumirEditor
-### Programm system
-Translates your code to selected programm system.
-
-`Kumir` - original KumirX reference. Code example: `вниз закрасить вправо закрасить верх влево`\
-`KumirX letters` - KumirX code with commands as letters WASD. Code example: `s d ww aw`\
-`KumirX fullwords` - KumirX code with commands as words and full arguments. Code example: `down right upwithout leftwithout`\
-`KumirX words` - KumirX code with commands as words and abbreviated arguments. Code example: `down right upw leftw`\
-`KumirX arrows` - KumirX code with commands as arrow symbols (↑←↓→). Code example: `↓ → ↑w ←w`
-
-## Settings in KumirX (main.py)
-
-`Hide buttons` - Hide all buttons on the bottom (cuz they are so laggy)
-
-## Settings in KxGraph
-
-`Step` - The smaller the number, the more accurate. Is a number that is added to x (default value is 1)\
-`Scale` - Scale of one tile (default value is step*10)
-`Offset` - Places the graph down by a certain amount of units (default value is 0)\
-`Offset color` - Color of line at 0 (default value is #2d2d2d)
-`Index` - Moves x units graph down (default value is -1)
-
-`Different color for every graph` - All new graphs will be a different colors\
-`Delete graph after error` - If while drawing graph will be error occured program will delete this graph\
-`Graph switch` - Deletes all graphs before creating new
-
-## Commands:
+## Commands
 ### Moves with paint:
 `w`, `up`, `↑` - move turtle up\
 `a`, `left`, `←` - move turtle left\
@@ -119,3 +80,50 @@ Example 1.1: `func:go-right` - Induces a function that we created in example 1
 
 Exmaple №2: `func:square:d:5_s:5_a:5_w:5` - Creates a function, that draws a square 5x5.\
 Exmaple №2.1: `func:square` - Induces a function that draws a square.
+
+# KumirEditor
+**KumirEditor** - a code generator on Kumir that uses only a few keys on your keyboard, instead of writing code
+
+## Shortcuts in KumirEditor (gen.py)
+
+`WASD` - Move turtle to up, left, down, right\
+`Ctrl+WASD` - Move turle without paint\
+`Alt+WASD` - Erase (Don't work in Kumir)
+
+## Settings in KumirEditor
+### Programm system
+Translates your code to selected programm system.
+
+`Kumir` - original KumirX reference. Code example: `вниз закрасить вправо закрасить верх влево`\
+`KumirX letters` - KumirX code with commands as letters WASD. Code example: `s d ww aw`\
+`KumirX fullwords` - KumirX code with commands as words and full arguments. Code example: `down right upwithout leftwithout`\
+`KumirX words` - KumirX code with commands as words and abbreviated arguments. Code example: `down right upw leftw`\
+`KumirX arrows` - KumirX code with commands as arrow symbols (↑←↓→). Code example: `↓ → ↑w ←w`
+
+# KxGraph
+KxGraph - a simple graphing calculator that can graph functions using Python.
+
+## Shortcuts in KxGraph (graph.py)
+
+`Enter`, `F5` - Create graph\
+`Enter` (in settings) - Apply\
+`Ctrl+P`, `Tab` - Settings\
+`Esc` - Clear\
+`Delete` - Delete graph by index in settings\
+`Ctrl+delete` - Delete last graph\
+`Shift+delete` - Delete first graph\
+`Ctrl+S` - Save graph as file
+
+## Settings in KxGraph
+
+`Step` - The smaller the number, the more accurate. Is a number that is added to x (default value is 1)\
+`Scale` - Scale of one tile (default value is step*10)
+`Offset` - Places the graph down by a certain amount of units (default value is 0)\
+`Offset color` - Color of line at 0 (default value is #2d2d2d)
+`Index` - Moves x units graph down (default value is -1)
+
+`Different color for every graph` - All new graphs will be a different colors\
+`Delete graph after error` - If while drawing graph will be error occured program will delete this graph\
+`Graph switch` - Deletes all graphs before creating new
+
+
