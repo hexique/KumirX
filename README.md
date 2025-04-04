@@ -115,15 +115,19 @@ KxGraph - a simple graphing calculator that can graph functions using Python.
 `Ctrl+S` - Save graph as file
 
 ## Settings in KxGraph
-
+### Main settings
 `Step` - The smaller the number, the more accurate. Is a number that is added to x (default value is 1)\
 `Scale` - Scale of one tile (default value is step*10)
 `Offset` - Places the graph down by a certain amount of units (default value is 0)\
-`Offset color` - Color of line at 0 (default value is #2d2d2d)
 `Index` - Moves x units graph down (default value is -1)
 
 `Different color for every graph` - All new graphs will be a different colors\
 `Delete graph after error` - If while drawing graph will be error occured program will delete this graph\
 `Graph switch` - Deletes all graphs before creating new
+
+### Customization
+`Background color` - Background color in program (default valuue is #1b1b1b)
+`Offset color` - Color of line at 0 (default value is #2d2d2d)
+`Graph color` - Background color in program ()
 
 
