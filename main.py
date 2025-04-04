@@ -3,8 +3,10 @@ from tkinter import filedialog, messagebox
 from time import time
 import math, random
 
-__ver__ = '1.5.1'
-__date__ = '02.04.2025'
+with open('version.dat') as f:
+    file = f.read()
+    __ver__ = file.split()[0]
+    __date__ = file.split()[1]
 
 if __name__ == '__main__':
     root = tk.Tk()
@@ -162,6 +164,7 @@ if __name__ == '__main__':
     functions = {
 
     }
+    dots = []
 
 def copy():
     root.clipboard_clear()
