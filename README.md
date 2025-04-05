@@ -44,7 +44,7 @@ All Of these code will display minimalistic Linux Mint logo:\
 `dd`, `rightd`, `ddelete`, `rightdelete` `→d` - move turtle right and erase this tile
 
 ### Other
-#### `color`, `col`, `c` - Changes a color of trail\
+`color`, `col`, `c` - Changes a color of trail\
 Example: `col:green` - Changes a turtle trail color to green\
 Example №2: `col:#0000ff` - Changes a trail color to #0000ff, or blue
 
@@ -130,9 +130,9 @@ KxGraph - a simple graphing calculator that can graph functions using Python.
 `Offset color` - Color of line at 0 (default value is #2d2d2d)\
 `Graph color` - Background color in program, that applys when change graph color is turned off (default value is #ffffff)
 
-`Colors` - Massive of colors with turned on option change graph color, if it ends it will generate random colors (default value is [#ff0000, #00ff00, #0000ff, #ffff00, #00ffff, #ff00ff])
-    `Add` - Add color in massive at the end
-    `Delete` - Delete an element in massive by index option
-    `Clear` - Deletes all elements from massive
+`Colors` - Massive of colors with turned on option change graph color, if it ends it will generate random colors (default value is [#ff0000, #00ff00, #0000ff, #ffff00, #00ffff, #ff00ff])\
+`Add` - Add color in massive at the end\
+`Delete` - Delete an element in massive by index option\
+`Clear` - Deletes all elements from massive
 
 
