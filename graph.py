@@ -10,9 +10,6 @@ with open('version.dat') as f:
     __ver__ = file.split()[0]
     __date__ = file.split()[1]
 
-graphs = []
-graphdata = []
-
 root = tk.Tk()
 root.title(f'KxGraph {__ver__}')
 root.geometry('1000x800')
@@ -25,7 +22,7 @@ scale = '10'
 offset = 40
 index = -1
 default_graphcol = '#ffffff'
-audit = ''
+audit = []
 
 switch_color = tk.BooleanVar(value=True)
 error_graph = tk.BooleanVar(value=True)
@@ -39,12 +36,68 @@ def save(text):
             initialfile=f"{func.get()}.txt",
             defaultextension=".txt",
             title="Save file",
-            filetypes=[("Text file", "*.txt"), ("All files", "*.*")]
+            filetypes=[("Text file", "*.txt"), ("JSON file", "*.json"), ("All files", "*.*")]
     )
 
     if file_path:
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(text)
+        if file_path.endswith('.txt'):
+            result = ''
+            for graph in audit:
+                result += f'''Function: {graph['function']}\n
+Graph: {graph['graphs']}
+Scale: {graph['scale']} ({eval(graph['function'])})
+Step: {graph['step']}
+Offset: {graph['offset']}
+Color: {graph['color']} ({graph['firstcolor']})
+Colors: {' '.join(graph['colors'])}
+
+Different color for every graph: {graph['switch_color']}
+Delete graph after error: {graph['error_graph']}
+Graph switch: {graph['one_graph_max']}\n\n'''
+                for dot in graph['dots']:
+                    print(dot)
+                    result += f'{dot["x"]} : {dot["y"]}\n'
+                result += f'''
+Dots in graph: {graph['graph_total']}
+Total dots of all time: {graph['alltime_total']}
+
+{'-'*20}
+
+'''
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(result)
+        elif file_path.endswith('.json'):
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(str(text).replace("'", '"').replace("True", "true").replace("False", "true").replace("<", '"<').replace(">", '>"').replace(", ", ",\n"))
+
+
+def save_settings():
+    with open('props.dat', 'w') as f:
+        f.write(f'{step} {scale} {offset} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {line["bg"]} ')
+    with open('props.dat', 'r') as f:
+        print(f'Properties are saved ({f.read()})')
+
+
+def load_settings(path):
+    global step, scale, offset, index, default_graphcol, switch_color, error_graph
+    with open(path, 'r') as f:
+        file = f.read()
+        file = file.split()
+
+        step = float(file[0])
+        scale = file[1]
+        offset = float(file[2])
+        index = int(file[3])
+        
+        switch_color.set(file[4] == 'True')
+        error_graph.set(file[5] == 'True')
+        one_graph_max.set(file[6] == 'True')
+        hide_btn.set(file[7] == 'True')
+
+        root.config(background=file[8])
+        default_graphcol = file[9]
+        line['bg'] = file[10]
+    save_settings()
 
 def colortable():
     color_root = tk.Toplevel(root)
@@ -52,7 +105,7 @@ def colortable():
     color_root.config(background='#1b1b1b')
 
     i = 0
-    for data in graphdata:
+    for data in audit:
         tk.Label(color_root, text=data['color'].lower(), bg=data['color'], anchor='w').grid(row=i,column=0)
         tk.Label(color_root, text=data['function'], bg='#1b1b1b', fg='#ffffff', anchor='w').grid(row=i,column=1)
         i += 1
@@ -64,17 +117,35 @@ def graph(function):
     x = 0
     if one_graph_max.get():
         delete(-1)
-    graphs.append([])
+    audit.append({'function': function,
+                  'scale': scale,
+                  'evalscale': eval(scale),
+                  'step': step,
+                  'offset': offset,
+
+                  'switch_color': switch_color.get(),
+                  'error_graph': error_graph.get(),
+                  'one_graph_max': one_graph_max.get(),
+                  
+                  'dots': []})
     if switch_color.get():
-        if len(graphs) > len(colors):
+        if len(audit) > len(colors):
             color = '#%02X%02X%02X' % (random.randint(0,255),random.randint(0,255),random.randint(0,255))
             colors.append(color)
         else:
-            color = colors[len(graphs)-1]
+            color = colors[len(audit)-1]
     else:
         color = default_graphcol
-    audit += f'Function: {function}\nGraph: {len(graphs)}\nScale: {eval(scale)} ({scale})\nStep: {step}\nOffset: {offset}\nColor: {color}\n\nDifferent color for every graph: {switch_color.get()}\nDelete graph after error: {error_graph.get()}\nGraph switch: {one_graph_max.get()}\n\nDots:\n'
-    graphdata.append({'function': function, 'color': color})
+    # audit += f'Function: {function}\nGraph: {len(graphs)}\nScale: {eval(scale)} ({scale})\nStep: {step}\nOffset: {offset}\nColor: {color}\n\nDifferent color for every graph: {switch_color.get()}\nDelete graph after error: {error_graph.get()}\nGraph switch: {one_graph_max.get()}\n\nDots:\n'
+                #       'color': color,
+                #   'firstcolor': color,
+                #   'colors': colors,
+
+    
+    audit[-1]['color'] = color
+    audit[-1]['firstcolor'] = color
+    audit[-1]['colors'] = colors
+
     while True:
         if x > int(root.winfo_width()/10):
             break
@@ -86,8 +157,10 @@ def graph(function):
             else:
                 dot = tk.Canvas(root, width=eval(scale, globals()), height=eval(scale, globals()), highlightthickness=0, bg=color)
                 dot.place(x=x*10,y=(eval(function, globals())+offset)*10)
-                audit += f'{x} : {eval(function, globals())}\n'
-                graphs[-1].append(dot)
+                audit[-1]['dots'].append({})
+                audit[-1]['dots'][-1]['x'] = x
+                audit[-1]['dots'][-1]['y'] = eval(function, globals())
+                audit[-1]['dots'][-1]['object'] = dot
         except ZeroDivisionError:
             x += step
             continue
@@ -98,28 +171,29 @@ def graph(function):
             break
         x += step
     total_dots = 0
-    for i in graphs:
-        total_dots += len(i)
-    audit += f'\nDots in graph: {len(graphs[-1])}\nDots of all time: {total_dots}\nGraphs: {len(graphs)}\n\n{"-"*10}\n\n'
-    print(f'Total dots: {len(graphs[-1])}')
+    for i in audit:
+        total_dots += len(i['dots'])
+    audit[-1]['graph_total'] = len(audit[-1]['dots'])
+    audit[-1]['alltime_total'] = total_dots
+    audit[-1]['graphs'] = len(audit)
+
+    print(f'Total dots: {len(audit[-1]["dots"])}')
         
 def reset():
     # tk.Canvas(root, width=root.winfo_width(), height=root.winfo_height()-20, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
-    global graphs, graphdata, object
-    for graph in graphs:
-        for object in graph:
-            object.destroy()
-    graphs = []
-    graphdata = []
+    global object, audit
+    for graph in audit:
+        for object in graph['dots']:
+            object['object'].destroy()
+    audit = []
 
 def delete(index):
-    global graphs, graphdata, object
-    if len(graphs) != 0:
-        for object in graphs[index]:
-            object.destroy()
-    graphs.pop(index)
-    graphdata.pop(index)
-
+    global audit, object
+    if len(audit) != 0:
+        for object in audit[index]['dots']:
+            object['object'].destroy()
+    audit.pop(index)
+    
 def update_settings():
     apply_btn.place(x=settings_root.winfo_width()-100,y=settings_root.winfo_height()-40)
 
@@ -141,7 +215,9 @@ def apply():
             submit.destroy()
             clear.destroy()
             delete_graph.destroy()
-    except: pass 
+        save_settings()
+    except: 
+        save_settings()
 
 def update_color(event):
     colors_label.place(x=70,y=color_root.winfo_height()-100)
@@ -161,10 +237,10 @@ def addcol(element):
     global colors
     colors.append(element)
     colors_display['text'] = ' '.join(colors)
-    if graphs[len(colors)-1] and graphs[len(colors)-1][0]['bg'] != colors[-1]:
-        for dot in graphs[len(colors)-1]:
+    if audit[len(colors)-1]['dots'] and audit[len(colors)-1]['dots'][0]['object']['bg'] != colors[-1]:
+        for dot in audit['dots'][len(colors)-1]:
             dot['bg'] = colors[-1]
-    graphdata[len(colors)-1]['color'] = colors[-1]
+    audit[len(colors)-1]['color'] = colors[-1]
 
 def deletecol(index):
     global colors
@@ -253,10 +329,10 @@ def settings():
     index_entry.place(x=10,y=150)
     index_entry.bind("<KeyRelease>", lambda event: apply())
 
-    tk.Checkbutton(settings_root, text='Different color for every graph', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=switch_color).place(x=10,y=180)
-    tk.Checkbutton(settings_root, text='Delete graph after error', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=error_graph).place(x=10,y=210)
-    tk.Checkbutton(settings_root, text='Graph switch', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=one_graph_max).place(x=10,y=240)
-    tk.Checkbutton(settings_root, text='Hide buttons', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=hide_btn).place(x=10,y=270)
+    tk.Checkbutton(settings_root, text='Different color for every graph', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=switch_color, command=apply).place(x=10,y=180)
+    tk.Checkbutton(settings_root, text='Delete graph after error', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=error_graph, command=apply).place(x=10,y=210)
+    tk.Checkbutton(settings_root, text='Graph switch', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=one_graph_max, command=apply).place(x=10,y=240)
+    tk.Checkbutton(settings_root, text='Hide buttons', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=hide_btn, command=apply).place(x=10,y=270)
 
     apply_btn = tk.Button(settings_root, text='Customization', fg='white', bg='#1b1b1b', command=colorsettings)
     apply_btn.place(x=420,y=460)
@@ -300,20 +376,27 @@ root.bind("<Tab>", lambda event: settings())
 menu = tk.Menu(root)  
 
 fileMenu = tk.Menu(menu, tearoff=0)
-fileMenu.add_command(label="Settings",command=settings)
 fileMenu.add_command(label="Reset",command=reset)
 fileMenu.add_command(label="Create graph",command=lambda: graph(func.get()))
-fileMenu.add_command(label="Exit",command=quit)
+fileMenu.add_command(label="Reset settings",command=lambda: load_settings('propsdef.dat'))
+fileMenu.add_separator()
+fileMenu.add_command(label="Delete",command=lambda: delete(index))
+fileMenu.add_command(label="Delete first",command=lambda: delete(0))
+fileMenu.add_command(label="Delete last",command=lambda: delete(-1))
+
+
 menu.add_cascade(label="File", menu=fileMenu)
 
 helpMenu = tk.Menu(menu, tearoff=0)
-helpMenu.add_command(label="Documentation",command=lambda: openpage())
-helpMenu.add_command(label="Reset",command=reset)
-helpMenu.add_command(label="Create graph",command=lambda: graph(func.get()))
-helpMenu.add_command(label="Exit",command=quit)
-menu.add_cascade(label="File", menu=helpMenu)
+helpMenu.add_command(label="Documentation",command=lambda: openpage('https://github.com/hexique/KumirX?tab=readme-ov-file#kxgraph'))
+helpMenu.add_command(label="Changelog",command=lambda: openpage('https://github.com/hexique/KumirX/blob/main/changelog.md'))
+
+helpMenu.add_command(label="Our GitHub",command=lambda: openpage('https://github.com/hexique/KumirX'))
+
+menu.add_cascade(label="Help", menu=helpMenu)
 
 root.config(menu=menu)
+load_settings('props.dat')
 
 settings()
 root.mainloop()
