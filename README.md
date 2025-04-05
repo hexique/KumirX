@@ -108,6 +108,7 @@ KxGraph - a simple graphing calculator that can graph functions using Python.
 `Enter`, `F5` - Create graph\
 `Enter` (in settings) - Apply\
 `Ctrl+P`, `Tab` - Settings\
+`Ctrl+G` - Color table\
 `Esc` - Clear\
 `Delete` - Delete graph by index in settings\
 `Ctrl+delete` - Delete last graph\
