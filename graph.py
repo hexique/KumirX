@@ -36,7 +36,7 @@ def save(text):
             initialfile=f"{func.get()}.txt",
             defaultextension=".txt",
             title="Save file",
-            filetypes=[("Text file", "*.txt"), ("JSON file", "*.json"), ("All files", "*.*")]
+            filetypes=[("Text file", "*.txt"), ("JSON file", "*.json"), ("Raw file", "*.kxg"), ("All files", "*.*")]
     )
 
     if file_path:
@@ -103,11 +103,24 @@ def colortable():
     color_root = tk.Toplevel(root)
     color_root.title(f'KxGraph {__ver__}')
     color_root.config(background='#1b1b1b')
+    tk.Label(color_root, text='№', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=0)
+    tk.Label(color_root, text='Color', bg='#1b1b1b', justify='left', anchor='w').grid(sticky="W", row=0,column=1)
+    tk.Label(color_root, text='Function', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=2)
+    tk.Label(color_root, text='Dots total', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=3)
+    tk.Label(color_root, text='Step', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=4)
+    tk.Label(color_root, text='Scale', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=5)
+    tk.Label(color_root, text='Offset', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=6)
 
-    i = 0
-    for data in audit:
-        tk.Label(color_root, text=data['color'].lower(), bg=data['color'], anchor='w').grid(row=i,column=0)
-        tk.Label(color_root, text=data['function'], bg='#1b1b1b', fg='#ffffff', anchor='w').grid(row=i,column=1)
+    i = 1
+    for graph in audit:
+        tk.Label(color_root, text=graph['graphs'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=0)
+        tk.Label(color_root, text=graph['color'].lower(), bg=graph['color'], justify='left', anchor='w').grid(sticky="W", row=i,column=1)
+        tk.Label(color_root, text=graph['function'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=2)
+        tk.Label(color_root, text=len(graph['dots']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=3)
+        tk.Label(color_root, text=str(graph['step']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=4)
+        tk.Label(color_root, text=eval(graph['scale']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=5)
+        tk.Label(color_root, text=graph['offset'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=6)
+
         i += 1
 
     color_root.mainloop()
@@ -197,28 +210,6 @@ def delete(index):
 def update_settings():
     apply_btn.place(x=settings_root.winfo_width()-100,y=settings_root.winfo_height()-40)
 
-def apply():
-    global step, offset, index, scale, default_graphcol
-    try:
-        step = float(step_entry.get()) 
-        offset = float(offset_entry.get())
-        index = int(index_entry.get())
-        scale = scale_entry.get()
-
-        line.place(x=0,y=offset*10)
-        line['height'] = eval(scale, globals())
-
-        line['bg'] = offsetcol_entry.get()
-        root.config(background=bgcol_entry.get())
-        default_graphcol = graphcol_entry.get()
-        if hide_btn.get():
-            submit.destroy()
-            clear.destroy()
-            delete_graph.destroy()
-        save_settings()
-    except: 
-        save_settings()
-
 def update_color(event):
     colors_label.place(x=70,y=color_root.winfo_height()-100)
     colors_entry.place(x=10,y=color_root.winfo_height()-100)
@@ -247,8 +238,39 @@ def deletecol(index):
     colors.pop(index)
     colors_display['text'] = ' '.join(colors)
 
+def apply():
+    global step, offset, index, scale, default_graphcol
+    global bgcol_preview, graphcol_entry, offset_entry, colors_preview
+    try:
+        step = float(step_entry.get()) 
+        offset = float(offset_entry.get())
+        index = int(index_entry.get())
+        scale = scale_entry.get()
+
+        line.place(x=0,y=offset*10)
+        line['height'] = eval(scale, globals())
+
+        line['bg'] = offsetcol_entry.get()
+        root.config(background=bgcol_entry.get())
+        default_graphcol = graphcol_entry.get()
+        if hide_btn.get():
+            submit.destroy()
+            clear.destroy()
+            delete_graph.destroy()
+        try:
+            bgcol_preview['bg'] = root.cget('bg')
+            graphcol_preview['bg'] = default_graphcol
+            offsetcol_preview['bg'] = line['bg']
+            colors_preview['bg'] = colors_entry.get()
+        except:
+            pass
+        save_settings()
+    except: 
+        save_settings()
+
 def colorsettings():
-    global color_root, offsetcol_entry, bgcol_entry, graphcol_entry, colors_entry, colors_display, colors_label, addcol_btn, deletecol_btn, clearcol_btn
+    global color_root, offsetcol_entry, bgcol_entry, graphcol_entry, colors_entry, colors_display, colors_label
+    global addcol_btn, deletecol_btn, clearcol_btn, bgcol_preview, graphcol_preview, offsetcol_preview, colors_preview
 
     color_root = tk.Toplevel(root)
     color_root.title(f'KxGraph {__ver__}')
@@ -257,35 +279,36 @@ def colorsettings():
 
     tk.Label(color_root, text='Customization', fg='white', bg='#1b1b1b', font=('Arial',30)).place(x=10,y=10)
 
-    tk.Label(color_root, text='Background color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=70,y=60)
+    tk.Label(color_root, text='Background color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=85,y=60)
     bgcol_entry = tk.Entry(color_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
     bgcol_entry.insert(0, root.cget('bg'))
-    bgcol_entry.place(x=10,y=60)
+    bgcol_entry.place(x=25,y=60)
     bgcol_entry.bind("<KeyRelease>", lambda event: apply())
 
-    tk.Label(color_root, text='Graph color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=70,y=90)
+    tk.Label(color_root, text='Graph color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=85,y=90)
     graphcol_entry = tk.Entry(color_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
     graphcol_entry.insert(0, default_graphcol)
-    graphcol_entry.place(x=10,y=90)
+    graphcol_entry.place(x=25,y=90)
     graphcol_entry.bind("<KeyRelease>", lambda event: apply())
 
-    tk.Label(color_root, text='Offset color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=70,y=120)
+    tk.Label(color_root, text='Offset color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=85,y=120)
     offsetcol_entry = tk.Entry(color_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
     offsetcol_entry.insert(0, line['bg'])
-    offsetcol_entry.place(x=10,y=120)
+    offsetcol_entry.place(x=25,y=120)
     offsetcol_entry.bind("<KeyRelease>", lambda event: apply())
 
     colors_label = tk.Label(color_root, text='Graph color massive', fg='white', bg='#1b1b1b', font=('Arial',10))
-    colors_label.place(x=70,y=120)
+    colors_label.place(x=85,y=120)
     colors_entry = tk.Entry(color_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
-    colors_entry.place(x=10,y=120)
+    colors_entry.place(x=25,y=120)
     colors_entry.bind("<KeyRelease>", lambda event: apply())
+    
 
     colors_display = tk.Label(color_root, text=' '.join(colors), fg='white', bg='#1b1b1b', font=('Arial',10))
     colors_display.place(x=10,y=180)
 
     addcol_btn = tk.Button(color_root, text='Add', bg='#1b1b1b', fg='white', command=lambda: addcol(colors_entry.get()))
-    addcol_btn.place(x=10,y=150)
+    addcol_btn.place(x=25,y=150)
 
     deletecol_btn = tk.Button(color_root, text='Delete', bg='#1b1b1b', fg='white', command=lambda: deletecol(index))
     deletecol_btn.place(x=90,y=150)
@@ -293,6 +316,13 @@ def colorsettings():
     clearcol_btn = tk.Button(color_root, text='Clear', bg='#1b1b1b', fg='white', command=clearcol)
     clearcol_btn.place(x=170,y=150)
 
+    try:
+        bgcol_preview = tk.Canvas(color_root, height=10, width=10, bg=root.cget('bg'), highlightthickness=0).place(x=10,y=60)
+        graphcol_preview = tk.Canvas(color_root, height=10, width=10, bg=default_graphcol, highlightthickness=0).place(x=10,y=90)
+        colors_preview = tk.Canvas(color_root, height=10, width=10, bg=colors_entry.get(), highlightthickness=0).place(x=10,y=120)
+        offsetcol_preview = tk.Canvas(color_root, height=10, width=10, bg=offsetcol_entry.get(), highlightthickness=0).place(x=10,y=120)
+    except:
+        pass
     color_root.bind('<Configure>', update_color)
     color_root.mainloop()
 
