@@ -3,6 +3,8 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from webbrowser import open as openpage
+from time import time, ctime
+
 import math, random
 
 with open('version.dat') as f:
@@ -29,7 +31,34 @@ error_graph = tk.BooleanVar(value=True)
 one_graph_max = tk.BooleanVar(value=False)
 hide_btn = tk.BooleanVar(value=False)
 
-colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff']
+colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff']
+
+def format_dictionary(dict):
+    result = ''
+    for graph in dict:
+        result += f'''Function: {graph['function']}\n
+Graph: {graph['graphs']}
+Scale: {graph['scale']} ({eval(graph['function'])})
+Step: {graph['step']}
+Offset: {graph['offset']}
+Color: {graph['color']} ({graph['firstcolor']})
+Colors: {' '.join(graph['colors'])}
+
+Different color for every graph: {graph['switch_color']}
+Delete graph after error: {graph['error_graph']}
+Graph switch: {graph['one_graph_max']}\n\n'''
+        for dot in graph['dots']:
+            print(dot)
+            result += f'    {dot["x"]} : {dot["y"]}\n'
+        result += f'''
+Dots in graph: {graph['graph_total']}
+Total dots of all time: {graph['alltime_total']}
+
+{'-'*20}
+
+'''
+    return result
+            
 
 def save(text):
     file_path = filedialog.asksaveasfilename(
@@ -41,42 +70,63 @@ def save(text):
 
     if file_path:
         if file_path.endswith('.txt'):
-            result = ''
-            for graph in audit:
-                result += f'''Function: {graph['function']}\n
-Graph: {graph['graphs']}
-Scale: {graph['scale']} ({eval(graph['function'])})
-Step: {graph['step']}
-Offset: {graph['offset']}
-Color: {graph['color']} ({graph['firstcolor']})
-Colors: {' '.join(graph['colors'])}
 
-Different color for every graph: {graph['switch_color']}
-Delete graph after error: {graph['error_graph']}
-Graph switch: {graph['one_graph_max']}\n\n'''
-                for dot in graph['dots']:
-                    print(dot)
-                    result += f'{dot["x"]} : {dot["y"]}\n'
-                result += f'''
-Dots in graph: {graph['graph_total']}
-Total dots of all time: {graph['alltime_total']}
-
-{'-'*20}
-
-'''
             with open(file_path, "w", encoding="utf-8") as f:
-                f.write(result)
+                f.write(format_dictionary(audit))
+        elif file_path.endswith('.kxg'):
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(str(text))
         elif file_path.endswith('.json'):
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(str(text).replace("'", '"').replace("True", "true").replace("False", "true").replace("<", '"<').replace(">", '>"').replace(", ", ",\n"))
-
+                # f.write(str(dumps(text)))
 
 def save_settings():
     with open('props.dat', 'w') as f:
-        f.write(f'{step} {scale} {offset} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {line["bg"]} ')
+        f.write(f'{step} {scale} {offset} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {line["bg"]}')
     with open('props.dat', 'r') as f:
         print(f'Properties are saved ({f.read()})')
 
+def save_settings_file():
+    file_path = filedialog.asksaveasfilename(
+            initialfile=f"props.dat",
+            defaultextension=".dat",
+            title="Save file",
+            filetypes=[("Raw file", "*.dat"), ("Text file", "*.txt"), ("All files", "*.*")]
+    )
+
+    if file_path:
+        if file_path.endswith('.txt'):
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(f'''
+Step: {step}
+Offset: {offset}
+Index: {index}
+Scale: {scale}
+
+Different color for every graph: {switch_color.get()}
+Delete graph after error: {error_graph.get()}
+Graph switch: {one_graph_max.get()}
+Hide buttons: {hide_btn.get()}
+
+Background color: {root.cget('bg')}
+Graph color: {default_graphcol}
+Offset color: {line['bg']}
+
+Colors: {' '.join(colors)}
+''')
+
+        elif file_path.endswith('.dat'):
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(f'{step} {scale} {offset} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {line["bg"]}')
+
+def load_settings_file():
+    file_path = filedialog.askopenfilename(
+            title="Open file",
+            filetypes=[("Raw file", "*.dat"), ("Text file", "*.txt"), ("All files", "*.*")]
+    )
+    if file_path:
+        load_settings(file_path)
 
 def load_settings(path):
     global step, scale, offset, index, default_graphcol, switch_color, error_graph
@@ -104,7 +154,7 @@ def colortable():
     color_root.title(f'KxGraph {__ver__}')
     color_root.config(background='#1b1b1b')
     tk.Label(color_root, text='№', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=0)
-    tk.Label(color_root, text='Color', bg='#1b1b1b', justify='left', anchor='w').grid(sticky="W", row=0,column=1)
+    tk.Label(color_root, text='Color', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=1)
     tk.Label(color_root, text='Function', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=2)
     tk.Label(color_root, text='Dots total', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=3)
     tk.Label(color_root, text='Step', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=0,column=4)
@@ -122,9 +172,24 @@ def colortable():
         tk.Label(color_root, text=graph['offset'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=6)
 
         i += 1
+    tk.Button(color_root, text='Audit', bg='#1b1b1b', fg='#ffffff', command=lambda: show_audit(format_dictionary(audit))).grid(sticky="ew", row=i+1, column=0, columnspan=2)
+    tk.Button(color_root, text='Raw dictionary', bg='#1b1b1b', fg='#ffffff', command=lambda: show_audit(str(audit))).grid(sticky="ew", row=i+1, column=2, columnspan=1)
 
     color_root.mainloop()
 
+def show_audit(text):
+    audit_root = tk.Toplevel(root)
+    audit_root.title(f'KxGraph {__ver__}')
+    audit_root.geometry('500x500')
+    audit_root.config(background='#1b1b1b')
+    
+    audit_display = tk.Text(audit_root, height=20, width=50, bg='#1b1b1b', fg='#ffffff')
+    audit_display.insert('1.0', text.replace(', ',',\n'))
+    audit_display['state'] = 'disabled'
+    audit_display.pack(fill=tk.BOTH, expand=True)
+
+
+    audit_root.mainloop()
 def graph(function):
     global x, audit, colors
     x = 0
@@ -229,8 +294,9 @@ def addcol(element):
     colors.append(element)
     colors_display['text'] = ' '.join(colors)
     if audit[len(colors)-1]['dots'] and audit[len(colors)-1]['dots'][0]['object']['bg'] != colors[-1]:
-        for dot in audit['dots'][len(colors)-1]:
-            dot['bg'] = colors[-1]
+        for dot in audit[len(colors)-1]['dots']:
+            dot['object']['bg'] = colors[-1]
+            print(dot['object']['bg'], ':', dot['object'])
     audit[len(colors)-1]['color'] = colors[-1]
 
 def deletecol(index):
@@ -257,13 +323,10 @@ def apply():
             submit.destroy()
             clear.destroy()
             delete_graph.destroy()
-        try:
-            bgcol_preview['bg'] = root.cget('bg')
-            graphcol_preview['bg'] = default_graphcol
-            offsetcol_preview['bg'] = line['bg']
-            colors_preview['bg'] = colors_entry.get()
-        except:
-            pass
+        bgcol_preview['bg'] = root.cget('bg')
+        graphcol_preview['bg'] = default_graphcol
+        offsetcol_preview['bg'] = offsetcol_entry.get()
+        colors_preview['bg'] = colors_entry.get()
         save_settings()
     except: 
         save_settings()
@@ -279,31 +342,30 @@ def colorsettings():
 
     tk.Label(color_root, text='Customization', fg='white', bg='#1b1b1b', font=('Arial',30)).place(x=10,y=10)
 
-    tk.Label(color_root, text='Background color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=85,y=60)
+    tk.Label(color_root, text='Background color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=95,y=60)
     bgcol_entry = tk.Entry(color_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
     bgcol_entry.insert(0, root.cget('bg'))
-    bgcol_entry.place(x=25,y=60)
+    bgcol_entry.place(x=35,y=60)
     bgcol_entry.bind("<KeyRelease>", lambda event: apply())
 
-    tk.Label(color_root, text='Graph color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=85,y=90)
+    tk.Label(color_root, text='Graph color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=95,y=90)
     graphcol_entry = tk.Entry(color_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
     graphcol_entry.insert(0, default_graphcol)
-    graphcol_entry.place(x=25,y=90)
+    graphcol_entry.place(x=35,y=90)
     graphcol_entry.bind("<KeyRelease>", lambda event: apply())
 
-    tk.Label(color_root, text='Offset color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=85,y=120)
+    tk.Label(color_root, text='Offset color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=95,y=120)
     offsetcol_entry = tk.Entry(color_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
     offsetcol_entry.insert(0, line['bg'])
-    offsetcol_entry.place(x=25,y=120)
+    offsetcol_entry.place(x=35,y=120)
     offsetcol_entry.bind("<KeyRelease>", lambda event: apply())
 
     colors_label = tk.Label(color_root, text='Graph color massive', fg='white', bg='#1b1b1b', font=('Arial',10))
-    colors_label.place(x=85,y=120)
+    colors_label.place(x=85,y=130)
     colors_entry = tk.Entry(color_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
-    colors_entry.place(x=25,y=120)
+    colors_entry.place(x=35,y=120)
     colors_entry.bind("<KeyRelease>", lambda event: apply())
     
-
     colors_display = tk.Label(color_root, text=' '.join(colors), fg='white', bg='#1b1b1b', font=('Arial',10))
     colors_display.place(x=10,y=180)
 
@@ -317,10 +379,14 @@ def colorsettings():
     clearcol_btn.place(x=170,y=150)
 
     try:
-        bgcol_preview = tk.Canvas(color_root, height=10, width=10, bg=root.cget('bg'), highlightthickness=0).place(x=10,y=60)
-        graphcol_preview = tk.Canvas(color_root, height=10, width=10, bg=default_graphcol, highlightthickness=0).place(x=10,y=90)
-        colors_preview = tk.Canvas(color_root, height=10, width=10, bg=colors_entry.get(), highlightthickness=0).place(x=10,y=120)
-        offsetcol_preview = tk.Canvas(color_root, height=10, width=10, bg=offsetcol_entry.get(), highlightthickness=0).place(x=10,y=120)
+        bgcol_preview = tk.Canvas(color_root, height=20, width=20, bg=root.cget('bg'), highlightthickness=0)
+        bgcol_preview.place(x=10,y=60)
+        graphcol_preview = tk.Canvas(color_root, height=20, width=20, bg=default_graphcol, highlightthickness=0)
+        graphcol_preview.place(x=10,y=90)
+        colors_preview = tk.Canvas(color_root, height=20, width=20, bg=colors_entry.get(), highlightthickness=0)
+        colors_preview.place(x=10,y=120)
+        offsetcol_preview = tk.Canvas(color_root, height=20, width=20, bg=offsetcol_entry.get(), highlightthickness=0)
+        offsetcol_preview.place(x=10,y=120)
     except:
         pass
     color_root.bind('<Configure>', update_color)
@@ -394,10 +460,10 @@ root.bind("<Configure>", update_widjets)
 
 root.bind("<Return>", lambda event: graph(func.get()))
 root.bind("<F5>", lambda event: graph(func.get()))
-root.bind("<Escape>", lambda event: reset())
-root.bind("<Delete>", lambda event: delete(index))
-root.bind("<Control-Delete>", lambda event: delete(-1))
-root.bind("<Shift-Delete>", lambda event: delete(0))
+root.bind("<Delete>", lambda event: reset())
+root.bind("<Escape>", lambda event: delete(index))
+root.bind("<Control-Escape>", lambda event: delete(-1))
+root.bind("<Shift-Escape>", lambda event: delete(0))
 root.bind("<Control-s>", lambda event: save(audit))
 root.bind("<Control-p>", lambda event: settings())
 root.bind("<Control-g>", lambda event: colortable())
@@ -410,21 +476,29 @@ fileMenu.add_command(label="Reset",command=reset)
 fileMenu.add_command(label="Create graph",command=lambda: graph(func.get()))
 fileMenu.add_command(label="Reset settings",command=lambda: load_settings('propsdef.dat'))
 fileMenu.add_separator()
+fileMenu.add_command(label="Save",command=lambda: save(audit))
+fileMenu.add_command(label="Save options",command=apply)
+fileMenu.add_command(label="Save options as",command=save_settings_file)
+fileMenu.add_command(label="Load options",command=load_settings_file)
+
+fileMenu.add_separator()
 fileMenu.add_command(label="Delete",command=lambda: delete(index))
 fileMenu.add_command(label="Delete first",command=lambda: delete(0))
 fileMenu.add_command(label="Delete last",command=lambda: delete(-1))
-
-
 menu.add_cascade(label="File", menu=fileMenu)
 
 helpMenu = tk.Menu(menu, tearoff=0)
 helpMenu.add_command(label="Documentation",command=lambda: openpage('https://github.com/hexique/KumirX?tab=readme-ov-file#kxgraph'))
 helpMenu.add_command(label="Changelog",command=lambda: openpage('https://github.com/hexique/KumirX/blob/main/changelog.md'))
-
 helpMenu.add_command(label="Our GitHub",command=lambda: openpage('https://github.com/hexique/KumirX'))
-
 menu.add_cascade(label="Help", menu=helpMenu)
 
+rootMenu = tk.Menu(menu, tearoff=0)
+rootMenu.add_command(label="Settings",command=settings)
+rootMenu.add_command(label="Customizaton",command=colorsettings)
+rootMenu.add_command(label="Statistics",command=colortable)
+
+menu.add_cascade(label="Roots", menu=rootMenu)
 root.config(menu=menu)
 load_settings('props.dat')
 
