@@ -103,16 +103,27 @@ Translates your code to selected programm system.
 # KxGraph
 KxGraph - a simple graphing calculator that can graph functions using Python.
 
+## Graph exmaples:
+`0` - straight line at 0.\
+`x` - diagonal.\
+`x**2` - square graph.\
+`math.sin(x)` - sinusoid.\
+`math.sin(x/10)*10` - more detailed sinusoid.\
+`math.tan(x)` - tangent graph.\
+`math.exp(x)` - exponent graph.
+
+There is used module named 'math'. Documentation: <a href="https://docs.python.org/3/library/math.html" target="_blank">https://docs.python.org/3/library/math.html</a>
+
 ## Shortcuts in KxGraph (graph.py)
 
 `Enter`, `F5` - Create graph\
 `Enter` (in settings) - Apply\
 `Ctrl+P`, `Tab` - Settings\
 `Ctrl+G` - Color table\
-`Esc` - Clear\
-`Delete` - Delete graph by index in settings\
-`Ctrl+delete` - Delete last graph\
-`Shift+delete` - Delete first graph\
+`Delete` - Clear\
+`Esc` - Delete graph by index in settings\
+`Ctrl+Esc` - Delete last graph\
+`Shift+Esc` - Delete first graph\
 `Ctrl+S` - Save graph as file
 
 ## Settings in KxGraph
