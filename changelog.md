@@ -1,3 +1,24 @@
+## 1.7 [06.04.2025]
+Fixed statistic table\
+Fixed menu\
+Changed shortcuts\
+Added save options as file\
+Added raw dictionary view\
+Added audit view
+
+## 1.6.1 [05.04.2025]
+Fixed color table\
+Added color preview to customization\
+Added raw file save (dont work)
+
+## 1.6 [05.04.2025]
+Added settings save\
+Fixed file save (added save to json, changed default save)\
+Fixed menu\
+Fixed settings update\
+Added changelog.md\
+Added documentation link
+
 ## 1.5.2 [02.04.2025]
 Added customization\
 Version data is moved to another file\
