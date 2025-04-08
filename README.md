@@ -5,6 +5,7 @@
 <img src="https://docs.altlinux.org/ru-RU/alt-education/10.1/html/alt-education/images/kumir.png" title="Kumir" height="300" >
 <img src="preview.png" title="KumirX" height="300">
 </p>
+
 ## Code examples:
 
 All Of these code will display minimalistic Linux Mint logo:\
