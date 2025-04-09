@@ -112,5 +112,5 @@ Added settings (translate to Kumir, KumirX)\
 Now you can erase by Shift+WASD\
 Added version display in main.py
 
-## 1.0
+## 1.0 [22.03.2025]
 Here is a start
