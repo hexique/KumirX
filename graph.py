@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from webbrowser import open as openpage
 from time import time, ctime
-
+import graphfunc as kmath
 import math, random
 
 with open('version.dat') as f:
@@ -12,26 +12,46 @@ with open('version.dat') as f:
     __ver__ = file.split()[0]
     __date__ = file.split()[1]
 
-root = tk.Tk()
-root.title(f'KxGraph {__ver__}')
-root.geometry('1000x800')
-photo = tk.PhotoImage(file = 'icon.ico')
-root.iconphoto(True,photo)
-root.config(background='#1b1b1b')
+def loop(**kwargs):
+    for item in range(kwargs['start'], kwargs['end']):
+        graph(function=kwargs['function'].replace('item', str(item)), looped=True)
 
-step = 1
-scale = '10'
-offset = 40
-index = -1
-default_graphcol = '#ffffff'
-audit = []
+def isprime(num: int):
+    for i in range(2, num):
+        if num % i == 0: return False
+    return True
 
-switch_color = tk.BooleanVar(value=True)
-error_graph = tk.BooleanVar(value=True)
-one_graph_max = tk.BooleanVar(value=False)
-hide_btn = tk.BooleanVar(value=False)
+def get_prime(id: int):
+    count, number = 0, 0
+    while count <= id:
+        number += 1
+        if isprime(number): 
+            count += 1
+            continue
+    print('returned', count)
+    return number
 
-colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff']
+if __name__ == '__main__':
+    root = tk.Tk()
+    root.title(f'KxGraph {__ver__}')
+    root.geometry('1000x800')
+    photo = tk.PhotoImage(file = 'icon.ico')
+    root.iconphoto(True,photo)
+    root.config(background='#1b1b1b')
+
+    step = 1
+    scale = '10'
+    offset = 40
+    index = -1
+    default_graphcol = '#ffffff'
+    audit = []
+
+    switch_color = tk.BooleanVar(value=True)
+    error_graph = tk.BooleanVar(value=True)
+    one_graph_max = tk.BooleanVar(value=False)
+    hide_btn = tk.BooleanVar(value=False)
+
+    colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff']
 
 def format_dictionary(dict):
     result = ''
@@ -190,22 +210,28 @@ def show_audit(text):
 
 
     audit_root.mainloop()
-def graph(function):
+def graph(**kwargs):
     global x, audit, colors
+    function = kwargs['function'] # i will fix this later
+    if '|' in function:
+        for i in function.split('|'):
+            graph(function=i)
+        return
     x = 0
     if one_graph_max.get():
         delete(-1)
-    audit.append({'function': function,
-                  'scale': scale,
-                  'evalscale': eval(scale),
-                  'step': step,
-                  'offset': offset,
+    if 'loop' not in function:
+        audit.append({'function': function,
+                    'scale': scale,
+                    'evalscale': eval(scale),
+                    'step': step,
+                    'offset': offset,
 
-                  'switch_color': switch_color.get(),
-                  'error_graph': error_graph.get(),
-                  'one_graph_max': one_graph_max.get(),
-                  
-                  'dots': []})
+                    'switch_color': switch_color.get(),
+                    'error_graph': error_graph.get(),
+                    'one_graph_max': one_graph_max.get(),
+                    
+                    'dots': []})
     if switch_color.get():
         if len(audit) > len(colors):
             color = '#%02X%02X%02X' % (random.randint(0,255),random.randint(0,255),random.randint(0,255))
@@ -219,10 +245,10 @@ def graph(function):
                 #   'firstcolor': color,
                 #   'colors': colors,
 
-    
-    audit[-1]['color'] = color
-    audit[-1]['firstcolor'] = color
-    audit[-1]['colors'] = colors
+    if 'loop' not in function:
+        audit[-1]['color'] = color
+        audit[-1]['firstcolor'] = color
+        audit[-1]['colors'] = colors
 
     while True:
         if x > int(root.winfo_width()/10):
@@ -235,25 +261,30 @@ def graph(function):
             else:
                 dot = tk.Canvas(root, width=eval(scale, globals()), height=eval(scale, globals()), highlightthickness=0, bg=color)
                 dot.place(x=x*10,y=(eval(function, globals())+offset)*10)
-                audit[-1]['dots'].append({})
-                audit[-1]['dots'][-1]['x'] = x
-                audit[-1]['dots'][-1]['y'] = eval(function, globals())
-                audit[-1]['dots'][-1]['object'] = dot
+                if 'loop' not in function:
+                    audit[-1]['dots'].append({})
+                    audit[-1]['dots'][-1]['x'] = x
+                    audit[-1]['dots'][-1]['y'] = eval(function, globals())
+                    audit[-1]['dots'][-1]['object'] = dot
         except ZeroDivisionError:
             x += step
             continue
+        except TypeError:
+            pass
         except Exception as e:
-            messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}')
-            if error_graph.get():
-                delete(index)
-            break
+            if 'looped' not in kwargs.keys():
+                messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}')
+                if error_graph.get():
+                    delete(index)
+                return 
         x += step
-    total_dots = 0
-    for i in audit:
-        total_dots += len(i['dots'])
-    audit[-1]['graph_total'] = len(audit[-1]['dots'])
-    audit[-1]['alltime_total'] = total_dots
-    audit[-1]['graphs'] = len(audit)
+    if 'loop' not in function:
+        total_dots = 0
+        for i in audit:
+            total_dots += len(i['dots'])
+        audit[-1]['graph_total'] = len(audit[-1]['dots'])
+        audit[-1]['alltime_total'] = total_dots
+        audit[-1]['graphs'] = len(audit)
 
     print(f'Total dots: {len(audit[-1]["dots"])}')
         
@@ -267,6 +298,7 @@ def reset():
 
 def delete(index):
     global audit, object
+    if len(audit) == 0: return
     if len(audit) != 0:
         for object in audit[index]['dots']:
             object['object'].destroy()
@@ -444,64 +476,67 @@ def update_widjets(event):
     clear.place(x=root.winfo_width()-108,y=root.winfo_height()-27)
     delete_graph.place(x=root.winfo_width()-186,y=root.winfo_height()-27)
 
-func = tk.Entry(root, bg='#1b1b1b', fg='white', insertbackground='white')
-func.place(x=0,y=780,width=root.winfo_width())
+if __name__ == '__main__':
+    func = tk.Entry(root, bg='#1b1b1b', fg='white', insertbackground='white')
+    func.place(x=0,y=780,width=root.winfo_width())
 
-submit = tk.Button(root, text='New graph', bg='#1b1b1b', fg='white', command=lambda: graph(func.get()))
-clear = tk.Button(root, text='Reset', bg='#1b1b1b', fg='white', command=reset)
-delete_graph = tk.Button(root, text='Delete graph', bg='#1b1b1b', fg='white', command=lambda: delete(index))
+    submit = tk.Button(root, text='New graph', bg='#1b1b1b', fg='white', command=lambda: graph(function=func.get()))
+    clear = tk.Button(root, text='Reset', bg='#1b1b1b', fg='white', command=reset)
+    delete_graph = tk.Button(root, text='Delete graph', bg='#1b1b1b', fg='white', command=lambda: delete(index))
 
-line = tk.Canvas(root, width=2000, height=eval(scale, globals()), bg='#2d2d2d', highlightthickness=0)
-line.place(x=0, y=offset*10)
+    line = tk.Canvas(root, width=2000, height=eval(scale, globals()), bg='#2d2d2d', highlightthickness=0)
+    line.place(x=0, y=offset*10)
 
-submit.place(x=0,y=0)
+    submit.place(x=0,y=0)
 
-root.bind("<Configure>", update_widjets)
+    root.bind("<Configure>", update_widjets)
 
-root.bind("<Return>", lambda event: graph(func.get()))
-root.bind("<F5>", lambda event: graph(func.get()))
-root.bind("<Delete>", lambda event: reset())
-root.bind("<Escape>", lambda event: delete(index))
-root.bind("<Control-Escape>", lambda event: delete(-1))
-root.bind("<Shift-Escape>", lambda event: delete(0))
-root.bind("<Control-s>", lambda event: save(audit))
-root.bind("<Control-p>", lambda event: settings())
-root.bind("<Control-g>", lambda event: colortable())
-root.bind("<Tab>", lambda event: settings())
+    root.bind("<Return>", lambda event: graph(function=func.get()))
+    root.bind("<F5>", lambda event: graph(function=func.get()))
+    root.bind("<Delete>", lambda event: reset())
+    root.bind("<Escape>", lambda event: delete(index))
+    root.bind("<Control-Escape>", lambda event: delete(-1))
+    root.bind("<Shift-Escape>", lambda event: delete(0))
+    root.bind("<Control-s>", lambda event: save(audit))
+    root.bind("<Control-p>", lambda event: settings())
+    root.bind("<Control-g>", lambda event: colortable())
+    root.bind("<Tab>", lambda event: settings())
 
-menu = tk.Menu(root)  
+    menu = tk.Menu(root)  
 
-fileMenu = tk.Menu(menu, tearoff=0)
-fileMenu.add_command(label="Reset",command=reset)
-fileMenu.add_command(label="Create graph",command=lambda: graph(func.get()))
-fileMenu.add_command(label="Reset settings",command=lambda: load_settings('propsdef.dat'))
-fileMenu.add_separator()
-fileMenu.add_command(label="Save",command=lambda: save(audit))
-fileMenu.add_command(label="Save options",command=apply)
-fileMenu.add_command(label="Save options as",command=save_settings_file)
-fileMenu.add_command(label="Load options",command=load_settings_file)
+    fileMenu = tk.Menu(menu, tearoff=0)
+    fileMenu.add_command(label="Reset",command=reset)
+    fileMenu.add_command(label="Create graph",command=lambda: graph(function=func.get()))
+    fileMenu.add_command(label="Reset settings",command=lambda: load_settings('propsdef.dat'))
+    fileMenu.add_separator()
+    fileMenu.add_command(label="Save",command=lambda: save(audit))
+    fileMenu.add_command(label="Save options",command=apply)
+    fileMenu.add_command(label="Save options as",command=save_settings_file)
+    fileMenu.add_command(label="Load options",command=load_settings_file)
 
-fileMenu.add_separator()
-fileMenu.add_command(label="Delete",command=lambda: delete(index))
-fileMenu.add_command(label="Delete first",command=lambda: delete(0))
-fileMenu.add_command(label="Delete last",command=lambda: delete(-1))
-menu.add_cascade(label="File", menu=fileMenu)
+    fileMenu.add_separator()
+    fileMenu.add_command(label="Delete",command=lambda: delete(index))
+    fileMenu.add_command(label="Delete first",command=lambda: delete(0))
+    fileMenu.add_command(label="Delete last",command=lambda: delete(-1))
+    menu.add_cascade(label="File", menu=fileMenu)
 
-helpMenu = tk.Menu(menu, tearoff=0)
-helpMenu.add_command(label="Documentation",command=lambda: openpage('https://github.com/hexique/KumirX?tab=readme-ov-file#kxgraph'))
-helpMenu.add_command(label="Changelog",command=lambda: openpage('https://github.com/hexique/KumirX/blob/main/changelog.md'))
-helpMenu.add_command(label="Our GitHub",command=lambda: openpage('https://github.com/hexique/KumirX'))
-menu.add_cascade(label="Help", menu=helpMenu)
+    helpMenu = tk.Menu(menu, tearoff=0)
+    helpMenu.add_command(label="Documentation",command=lambda: openpage('https://github.com/hexique/KumirX?tab=readme-ov-file#kxgraph'))
+    helpMenu.add_command(label="Changelog",command=lambda: openpage('https://github.com/hexique/KumirX/blob/main/changelog.md'))
+    helpMenu.add_command(label="Our GitHub",command=lambda: openpage('https://github.com/hexique/KumirX'))
+    menu.add_cascade(label="Help", menu=helpMenu)
 
-rootMenu = tk.Menu(menu, tearoff=0)
-rootMenu.add_command(label="Settings",command=settings)
-rootMenu.add_command(label="Customizaton",command=colorsettings)
-rootMenu.add_command(label="Statistics",command=colortable)
+    rootMenu = tk.Menu(menu, tearoff=0)
+    rootMenu.add_command(label="Settings",command=settings)
+    rootMenu.add_command(label="Customizaton",command=colorsettings)
+    rootMenu.add_command(label="Statistics",command=colortable)
+    rootMenu.add_command(label="Audit",command=lambda: show_audit(text=format_dictionary(audit)))
+    rootMenu.add_command(label="Raw audit",command=lambda: show_audit(text=str(audit)))
 
-menu.add_cascade(label="Roots", menu=rootMenu)
-root.config(menu=menu)
-load_settings('props.dat')
+    menu.add_cascade(label="Roots", menu=rootMenu)
+    root.config(menu=menu)
+    load_settings('props.dat')
 
-settings()
-root.mainloop()
+    settings()
+    root.mainloop()
 
