@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from webbrowser import open as openpage
 from time import time, ctime
-import graphfunc as kmath
+
 import math, random
 
 with open('version.dat') as f:
