@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from webbrowser import open as openpage
 from time import time, ctime
+from json import load as loadjson
 
 import math, random
 
@@ -12,9 +13,9 @@ with open('version.dat') as f:
     __ver__ = file.split()[0]
     __date__ = file.split()[1]
 
-def loop(**kwargs):
+def loop(function, **kwargs):
     for item in range(kwargs['start'], kwargs['end']):
-        graph(function=kwargs['function'].replace('item', str(item)), looped=True)
+        graph(function=function.replace('item', str(item)), looped=True)
 
 def isprime(num: int):
     for i in range(2, num):
@@ -28,7 +29,7 @@ def get_prime(id: int):
         if isprime(number): 
             count += 1
             continue
-    print('returned', count)
+    print('returned', number, ':', count)
     return number
 
 if __name__ == '__main__':
@@ -101,6 +102,24 @@ def save(text):
                 f.write(str(text).replace("'", '"').replace("True", "true").replace("False", "true").replace("<", '"<').replace(">", '>"').replace(", ", ",\n"))
                 # f.write(str(dumps(text)))
 
+def load():
+    global audit, colors
+
+    file_path = filedialog.askopenfilename(
+            title="Open file",
+            filetypes=[("JSON file", "*.json"), ("Raw file", "*.kxg"), ("All files", "*.*")]
+    )
+    if file_path:
+        with open(file_path, 'r') as f:
+
+            jsoned_audit = loadjson(f)
+            colors = jsoned_audit[-1]['colors']
+            for element in jsoned_audit:
+                graph(function=element['function'])
+            print(f'File loaded succesfuly')
+
+            
+
 def save_settings():
     with open('props.dat', 'w') as f:
         f.write(f'{step} {scale} {offset} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {line["bg"]}')
@@ -169,6 +188,25 @@ def load_settings(path):
         line['bg'] = file[10]
     save_settings()
 
+def showinfo(id):
+    info_root = tk.Toplevel(root)
+    info_root.title(f'KxGraph {__ver__}')
+    info_root.config(background='#1b1b1b')
+
+    tk.Label(info_root, text=audit[id]['function'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", columnspan=3, row=0, column=0)
+    tk.Label(info_root, text='№', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=1,column=0)
+    tk.Label(info_root, text='x', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=1,column=1)
+    tk.Label(info_root, text='y', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=1,column=2)
+
+    i = 2
+    for dot in audit[id]['dots']:
+        tk.Label(info_root, text=str(i), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=0)
+        tk.Label(info_root, text=dot['x'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=1)
+        tk.Label(info_root, text=dot['y'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=2)
+
+        i += 1
+    info_root.mainloop()
+
 def colortable():
     color_root = tk.Toplevel(root)
     color_root.title(f'KxGraph {__ver__}')
@@ -183,15 +221,19 @@ def colortable():
 
     i = 1
     for graph in audit:
-        tk.Label(color_root, text=graph['graphs'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=0)
-        tk.Label(color_root, text=graph['color'].lower(), bg=graph['color'], justify='left', anchor='w').grid(sticky="W", row=i,column=1)
-        tk.Label(color_root, text=graph['function'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=2)
-        tk.Label(color_root, text=len(graph['dots']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=3)
-        tk.Label(color_root, text=str(graph['step']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=4)
-        tk.Label(color_root, text=eval(graph['scale']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=5)
-        tk.Label(color_root, text=graph['offset'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=6)
+        try:
+            tk.Label(color_root, text=graph['graphs'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=0)
+            tk.Label(color_root, text=graph['color'].lower(), bg=graph['color'], font=("TkFixedFont"), justify='left', anchor='w').grid(sticky="W", row=i,column=1)
+            tk.Label(color_root, text=graph['function'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=2)
+            tk.Label(color_root, text=len(graph['dots']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=3)
+            tk.Label(color_root, text=str(graph['step']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=4)
+            tk.Label(color_root, text=eval(graph['scale']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=5)
+            tk.Label(color_root, text=graph['offset'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=6)
+            tk.Button(color_root, text='More info', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w', font=('TkDefaultFont', 7), command=lambda i=i: showinfo(i-1)).grid(sticky="W", row=i,column=7)
 
-        i += 1
+            i += 1
+        except Exception as e:
+            print(e)
     tk.Button(color_root, text='Audit', bg='#1b1b1b', fg='#ffffff', command=lambda: show_audit(format_dictionary(audit))).grid(sticky="ew", row=i+1, column=0, columnspan=2)
     tk.Button(color_root, text='Raw dictionary', bg='#1b1b1b', fg='#ffffff', command=lambda: show_audit(str(audit))).grid(sticky="ew", row=i+1, column=2, columnspan=1)
 
@@ -220,7 +262,7 @@ def graph(**kwargs):
     x = 0
     if one_graph_max.get():
         delete(-1)
-    if 'loop' not in function:
+    if 'loop' not in function and 'modify' not in kwargs.keys():
         audit.append({'function': function,
                     'scale': scale,
                     'evalscale': eval(scale),
@@ -245,7 +287,7 @@ def graph(**kwargs):
                 #   'firstcolor': color,
                 #   'colors': colors,
 
-    if 'loop' not in function:
+    if 'loop' not in function and 'modify' not in kwargs.keys():
         audit[-1]['color'] = color
         audit[-1]['firstcolor'] = color
         audit[-1]['colors'] = colors
@@ -261,7 +303,7 @@ def graph(**kwargs):
             else:
                 dot = tk.Canvas(root, width=eval(scale, globals()), height=eval(scale, globals()), highlightthickness=0, bg=color)
                 dot.place(x=x*10,y=(eval(function, globals())+offset)*10)
-                if 'loop' not in function:
+                if 'loop' not in function and 'modify' not in kwargs.keys():
                     audit[-1]['dots'].append({})
                     audit[-1]['dots'][-1]['x'] = x
                     audit[-1]['dots'][-1]['y'] = eval(function, globals())
@@ -278,7 +320,7 @@ def graph(**kwargs):
                     delete(index)
                 return 
         x += step
-    if 'loop' not in function:
+    if 'loop' not in function and 'modify' not in kwargs.keys():
         total_dots = 0
         for i in audit:
             total_dots += len(i['dots'])
@@ -286,8 +328,9 @@ def graph(**kwargs):
         audit[-1]['alltime_total'] = total_dots
         audit[-1]['graphs'] = len(audit)
 
-    print(f'Total dots: {len(audit[-1]["dots"])}')
-        
+    if len(audit) != 0:
+        print(f'Total dots: {len(audit[-1]["dots"])}')
+            
 def reset():
     # tk.Canvas(root, width=root.winfo_width(), height=root.winfo_height()-20, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
     global object, audit
@@ -476,6 +519,11 @@ def update_widjets(event):
     clear.place(x=root.winfo_width()-108,y=root.winfo_height()-27)
     delete_graph.place(x=root.winfo_width()-186,y=root.winfo_height()-27)
 
+def insert_pattern(function):
+    func.delete(0, tk.END)
+    func.insert(0, function)
+
+
 if __name__ == '__main__':
     func = tk.Entry(root, bg='#1b1b1b', fg='white', insertbackground='white')
     func.place(x=0,y=780,width=root.winfo_width())
@@ -510,6 +558,8 @@ if __name__ == '__main__':
     fileMenu.add_command(label="Reset settings",command=lambda: load_settings('propsdef.dat'))
     fileMenu.add_separator()
     fileMenu.add_command(label="Save",command=lambda: save(audit))
+    fileMenu.add_command(label="Load",command=load)
+    fileMenu.add_separator()
     fileMenu.add_command(label="Save options",command=apply)
     fileMenu.add_command(label="Save options as",command=save_settings_file)
     fileMenu.add_command(label="Load options",command=load_settings_file)
@@ -532,11 +582,32 @@ if __name__ == '__main__':
     rootMenu.add_command(label="Statistics",command=colortable)
     rootMenu.add_command(label="Audit",command=lambda: show_audit(text=format_dictionary(audit)))
     rootMenu.add_command(label="Raw audit",command=lambda: show_audit(text=str(audit)))
-
     menu.add_cascade(label="Roots", menu=rootMenu)
+
+    patternsMenuUpscaled = tk.Menu(menu, tearoff=0)
+    patternsMenuUpscaled.add_command(label="Sine wave",command=lambda: insert_pattern('math.sin(x/10)*10'))
+    patternsMenuUpscaled.add_command(label="Cosine wave",command=lambda: insert_pattern('math.cos(x/10)*10'))
+    patternsMenuUpscaled.add_command(label="Tangent",command=lambda: insert_pattern('math.tan(x/10)*10'))
+    patternsMenuUpscaled.add_command(label="Exponent",command=lambda: insert_pattern('math.exp(x/10)*10'))
+    patternsMenuUpscaled.add_command(label="Parabol",command=lambda: insert_pattern('x/10**2*10'))
+    patternsMenuUpscaled.add_command(label="Multiplicative inverse",command=lambda: insert_pattern('10/x'))
+    patternsMenuUpscaled.add_command(label="Square root",command=lambda: insert_pattern('math.sqrt(x/10)*10'))
+
+    patternsMenu = tk.Menu(menu, tearoff=0)
+    patternsMenu.add_command(label="Sine wave",command=lambda: insert_pattern('math.sin(x)'))
+    patternsMenu.add_command(label="Cosine wave",command=lambda: insert_pattern('math.cos(x)'))
+    patternsMenu.add_command(label="Tangent",command=lambda: insert_pattern('math.tan(x)'))
+    patternsMenu.add_command(label="Exponent",command=lambda: insert_pattern('math.exp(x)'))
+    patternsMenu.add_command(label="Parabol",command=lambda: insert_pattern('x**2'))
+    patternsMenu.add_command(label="Multiplicative inverse",command=lambda: insert_pattern('1/x'))
+    patternsMenu.add_command(label="Square root",command=lambda: insert_pattern('math.sqrt(x)'))
+    patternsMenu.add_separator()
+    patternsMenu.add_cascade(label="Upscaled",menu=patternsMenuUpscaled)
+
+    menu.add_cascade(label="Patterns", menu=patternsMenu)
+
     root.config(menu=menu)
     load_settings('props.dat')
 
     settings()
     root.mainloop()
-
