@@ -114,7 +114,17 @@ KxGraph - a simple graphing calculator that can graph functions using Python.
 `math.tan(x)` - tangent graph.\
 `math.exp(x)` - exponent graph.
 
-There is used module named 'math'. Documentation: <a href="https://docs.python.org/3/library/math.html" target="_blank">https://docs.python.org/3/library/math.html</a>
+There is used built-in module named 'math'. Documentation and all functions: <a href="https://docs.python.org/3/library/math.html" target="_blank">https://docs.python.org/3/library/math.html</a>
+
+
+## Operators and built-in functions:
+`|` - splits your graph and allows you to create several graphs in one line\
+Example: `x | x+2 | x*2` - Will create a 3 graphs\
+Example №2: `math.sin(x) | math.cos(x)` - Sine wave and cosine wave
+
+`loop(function, **kwargs (start*, end))` - Works like a loop and saves iteration in variable 'item'\
+Example: `loop('x*item', start=0, end=5)` - Makes a five graphs with functions x*0, x\*1, x\*2, etc.\
+Example №2: `loop('math.sin(x/item)*item', end=10)` - Makes a ten sine waves, that are getting bigger and bigger (math.sin(x/0)\*0, math.sin(x/1)\*1, math.sin(x/2)\*2...)
 
 ## Shortcuts in KxGraph (graph.py)
 
