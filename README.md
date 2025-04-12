@@ -105,7 +105,7 @@ Translates your code to selected programm system.
 # KxGraph
 KxGraph - a simple graphing calculator that can graph functions using Python.
 
-## Graph exmaples:
+## Graph examples:
 `0` - straight line at 0.\
 `x` - diagonal.\
 `x**2` - square graph.\
@@ -121,6 +121,15 @@ There is used built-in module named 'math'. Documentation and all functions: <a 
 `|` - splits your graph and allows you to create several graphs in one line\
 Example: `x | x+2 | x*2` - Will create a 3 graphs\
 Example №2: `math.sin(x) | math.cos(x)` - Sine wave and cosine wave
+
+`isprime(num)` - Checks for a prime number, if it prime - returns True (1), else returns False (0)\
+Example: `isprime(7)` - Returns 1 because 7 is prime number\
+Exmaple №2: `isprime(9)` - Returns 0 because 9 is not prime number (divisior is 7)
+
+`get_prime(num)` - Returns a *num*th prime number\
+Example: `get_prime(3)` - Returns 5, because this is a 3rd prime number (2, 3, **5**)\
+Example №2: `get_prime(4)` - Returns 7, 4th prime number. (2, 3, 5, **7**)\
+Example №3: `get_prime(10)` - Returns 27, (2, 3, 5, 7, 11, 13, 17, 19, 23, **27**)
 
 `loop(function, **kwargs (start*, end))` - Works like a loop and saves iteration in variable 'item'\
 Example: `loop('x*item', start=0, end=5)` - Makes a five graphs with functions x*0, x\*1, x\*2, etc.\
