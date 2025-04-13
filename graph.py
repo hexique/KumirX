@@ -6,31 +6,16 @@ from webbrowser import open as openpage
 from time import time, ctime
 from json import load as loadjson
 
-import math, random
+from graphfunc import *
+import random
+from math import *
 
-with open('version.dat') as f:
-    file = f.read()
-    __ver__ = file.split()[0]
-    __date__ = file.split()[1]
+with open('version.json') as f:
+    __ver__ = loadjson(f)['ver']
 
 def loop(function, **kwargs):
     for item in range(kwargs['start'], kwargs['end']):
         graph(function=function.replace('item', str(item)), looped=True)
-
-def isprime(num: int):
-    for i in range(2, num):
-        if num % i == 0: return False
-    return True
-
-def get_prime(id: int):
-    count, number = 0, 0
-    while count <= id:
-        number += 1
-        if isprime(number): 
-            count += 1
-            continue
-    print('returned', number, ':', count)
-    return number
 
 if __name__ == '__main__':
     root = tk.Tk()
@@ -42,7 +27,7 @@ if __name__ == '__main__':
 
     step = 1
     scale = '10'
-    offset = 40
+    offset = {'x': 30, 'y': 40}
     index = -1
     default_graphcol = '#ffffff'
     audit = []
@@ -61,7 +46,8 @@ def format_dictionary(dict):
 Graph: {graph['graphs']}
 Scale: {graph['scale']} ({eval(graph['function'])})
 Step: {graph['step']}
-Offset: {graph['offset']}
+Offset X: {graph['offset']['x']}
+Offset Y: {graph['offset']['y']}
 Color: {graph['color']} ({graph['firstcolor']})
 Colors: {' '.join(graph['colors'])}
 
@@ -122,7 +108,7 @@ def load():
 
 def save_settings():
     with open('props.dat', 'w') as f:
-        f.write(f'{step} {scale} {offset} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {line["bg"]}')
+        f.write(f'{step} {scale} {offset["x"]} {offset["y"]} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {linex["bg"]}')
     with open('props.dat', 'r') as f:
         print(f'Properties are saved ({f.read()})')
 
@@ -139,7 +125,8 @@ def save_settings_file():
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(f'''
 Step: {step}
-Offset: {offset}
+Offset X: {offset['x']}
+Offset Y: {offset['y']}
 Index: {index}
 Scale: {scale}
 
@@ -150,14 +137,14 @@ Hide buttons: {hide_btn.get()}
 
 Background color: {root.cget('bg')}
 Graph color: {default_graphcol}
-Offset color: {line['bg']}
+Offset color: {liney['bg']}
 
 Colors: {' '.join(colors)}
 ''')
 
         elif file_path.endswith('.dat'):
             with open(file_path, "w", encoding="utf-8") as f:
-                f.write(f'{step} {scale} {offset} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {line["bg"]}')
+                f.write(f'{step} {scale} {offset["x"]} {offset["y"]} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {linex["bg"]}')
 
 def load_settings_file():
     file_path = filedialog.askopenfilename(
@@ -175,17 +162,20 @@ def load_settings(path):
 
         step = float(file[0])
         scale = file[1]
-        offset = float(file[2])
-        index = int(file[3])
+        offset['x'] = float(file[2])
+        offset['y'] = float(file[3])
+        index = int(file[4])
         
-        switch_color.set(file[4] == 'True')
-        error_graph.set(file[5] == 'True')
-        one_graph_max.set(file[6] == 'True')
-        hide_btn.set(file[7] == 'True')
+        switch_color.set(file[5] == 'True')
+        error_graph.set(file[6] == 'True')
+        one_graph_max.set(file[7] == 'True')
+        hide_btn.set(file[8] == 'True')
 
-        root.config(background=file[8])
-        default_graphcol = file[9]
-        line['bg'] = file[10]
+        root.config(background=file[9])
+        default_graphcol = file[0]
+        linex['bg'] = file[11]
+        liney['bg'] = file[11]
+
     save_settings()
 
 def showinfo(id):
@@ -228,7 +218,7 @@ def colortable():
             tk.Label(color_root, text=len(graph['dots']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=3)
             tk.Label(color_root, text=str(graph['step']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=4)
             tk.Label(color_root, text=eval(graph['scale']), bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=5)
-            tk.Label(color_root, text=graph['offset'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=6)
+            tk.Label(color_root, text=graph['offset']['y'], bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w').grid(sticky="W", row=i,column=6)
             tk.Button(color_root, text='More info', bg='#1b1b1b', fg='#ffffff', justify='left', anchor='w', font=('TkDefaultFont', 7), command=lambda i=i: showinfo(i-1)).grid(sticky="W", row=i,column=7)
 
             i += 1
@@ -259,7 +249,7 @@ def graph(**kwargs):
         for i in function.split('|'):
             graph(function=i)
         return
-    x = 0
+    x = -offset['x']
     if one_graph_max.get():
         delete(-1)
     if 'loop' not in function and 'modify' not in kwargs.keys():
@@ -296,13 +286,13 @@ def graph(**kwargs):
         if x > int(root.winfo_width()/10):
             break
         try:
-            if eval(function, globals())+offset >= root.winfo_height()/10-2: 
-                print(eval(function, globals())+offset, root.winfo_height()/10-2)
+            if eval(function, globals())+offset['y'] >= root.winfo_height()/10-2: 
+                print(eval(function, globals())+offset['y'], root.winfo_height()/10-2)
                 x += step
                 continue
             else:
                 dot = tk.Canvas(root, width=eval(scale, globals()), height=eval(scale, globals()), highlightthickness=0, bg=color)
-                dot.place(x=x*10,y=(eval(function, globals())+offset)*10)
+                dot.place(x=(x+offset['x'])*10,y=(eval(f'-({function})', globals())+offset['y'])*10)
                 if 'loop' not in function and 'modify' not in kwargs.keys():
                     audit[-1]['dots'].append({})
                     audit[-1]['dots'][-1]['x'] = x
@@ -311,7 +301,7 @@ def graph(**kwargs):
         except ZeroDivisionError:
             x += step
             continue
-        except TypeError:
+        except IndexError:
             pass
         except Exception as e:
             if 'looped' not in kwargs.keys():
@@ -380,18 +370,29 @@ def deletecol(index):
     colors_display['text'] = ' '.join(colors)
 
 def apply():
-    global step, offset, index, scale, default_graphcol
-    global bgcol_preview, graphcol_entry, offset_entry, colors_preview
+    global step, offset, index, scale, default_graphcol, linex, liney
+    global bgcol_preview, graphcol_entry, offsetx_entry, colors_preview
     try:
         step = float(step_entry.get()) 
-        offset = float(offset_entry.get())
+        offset['x'] = float(offsetx_entry.get())
+        offset['y'] = float(offsety_entry.get())
+        print('offset', offset)
         index = int(index_entry.get())
         scale = scale_entry.get()
 
-        line.place(x=0,y=offset*10)
-        line['height'] = eval(scale, globals())
+        linex.place(x=0,y=offset['x']*eval(scale, globals()))
+        print(0, offset['x']*eval(scale, globals()), eval(scale, globals()))
+        linex['height'] = eval(scale, globals())
 
-        line['bg'] = offsetcol_entry.get()
+        liney.place(y=0,x=offset['y']*eval(scale, globals()))
+        print(offset['y']*eval(scale, globals()), 0, eval(scale, globals()))
+        liney['width'] = eval(scale, globals())
+        try:
+            liney['bg'] = offsetcol_entry.get()
+            linex['bg'] = offsetcol_entry.get()
+        except:
+            pass
+
         root.config(background=bgcol_entry.get())
         default_graphcol = graphcol_entry.get()
         if hide_btn.get():
@@ -431,7 +432,7 @@ def colorsettings():
 
     tk.Label(color_root, text='Offset color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=95,y=120)
     offsetcol_entry = tk.Entry(color_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
-    offsetcol_entry.insert(0, line['bg'])
+    offsetcol_entry.insert(0, linex['bg'])
     offsetcol_entry.place(x=35,y=120)
     offsetcol_entry.bind("<KeyRelease>", lambda event: apply())
 
@@ -468,7 +469,7 @@ def colorsettings():
     color_root.mainloop()
 
 def settings():
-    global settings_root, apply_btn, switch_color, error_graph, one_graph_max, step_entry, offset_entry, index_entry, scale_entry, hide_btn
+    global settings_root, apply_btn, switch_color, error_graph, one_graph_max, step_entry, offsetx_entry, offsety_entry, index_entry, scale_entry, hide_btn
     settings_root = tk.Toplevel(root)
     settings_root.title(f'KxGraph {__ver__}')
     settings_root.geometry('500x500')
@@ -488,11 +489,17 @@ def settings():
     scale_entry.place(x=10,y=90)
     scale_entry.bind("<KeyRelease>", lambda event: apply())
 
-    tk.Label(settings_root, text='Offset', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=70,y=120)
-    offset_entry = tk.Entry(settings_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
-    offset_entry.insert(0, str(offset))
-    offset_entry.place(x=10,y=120)
-    offset_entry.bind("<KeyRelease>", lambda event: apply())
+    tk.Label(settings_root, text='Offset X', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=70,y=120)
+    offsetx_entry = tk.Entry(settings_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
+    offsetx_entry.insert(0, str(offset['x']))
+    offsetx_entry.place(x=10,y=120)
+    offsetx_entry.bind("<KeyRelease>", lambda event: apply())
+
+    tk.Label(settings_root, text='Offset Y', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=260,y=120)
+    offsety_entry = tk.Entry(settings_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
+    offsety_entry.insert(0, str(offset['y']))
+    offsety_entry.place(x=200,y=120)
+    offsety_entry.bind("<KeyRelease>", lambda event: apply())
 
     tk.Label(settings_root, text='Index', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=70,y=150)
     index_entry = tk.Entry(settings_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
@@ -525,15 +532,17 @@ def insert_pattern(function):
 
 
 if __name__ == '__main__':
+    linex = tk.Canvas(root, width=2000, height=eval(scale, globals()), bg='#2d2d2d', highlightthickness=0)
+    linex.place(y=0, x=offset['x']*10)
+    liney = tk.Canvas(root, height=2000, width=eval(scale, globals()), bg='#2d2d2d', highlightthickness=0)
+    liney.place(x=0, y=offset['y']*10)
+
     func = tk.Entry(root, bg='#1b1b1b', fg='white', insertbackground='white')
     func.place(x=0,y=780,width=root.winfo_width())
 
     submit = tk.Button(root, text='New graph', bg='#1b1b1b', fg='white', command=lambda: graph(function=func.get()))
     clear = tk.Button(root, text='Reset', bg='#1b1b1b', fg='white', command=reset)
     delete_graph = tk.Button(root, text='Delete graph', bg='#1b1b1b', fg='white', command=lambda: delete(index))
-
-    line = tk.Canvas(root, width=2000, height=eval(scale, globals()), bg='#2d2d2d', highlightthickness=0)
-    line.place(x=0, y=offset*10)
 
     submit.place(x=0,y=0)
 
@@ -608,6 +617,6 @@ if __name__ == '__main__':
 
     root.config(menu=menu)
     load_settings('props.dat')
-
     settings()
+    apply()
     root.mainloop()
