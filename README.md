@@ -169,12 +169,14 @@ Example №2: `len(divisiors(10))` - Returns 4 (total divisiors)
 ### Main settings
 `Step` - The smaller the number, the more accurate. Is a number that is added to x (default value is 1)\
 `Scale` - Scale of one tile (default value is step*10)
-`Offset` - Places the graph down by a certain amount of units (default value is 0)\
+`Offset Y` - Places the graph down by a certain amount of units (default value is 40)\
+`Offset X` - Moves (x: 0) to your value (default value is 40)\
 `Index` - Moves x units graph down (default value is -1)
 
 `Different color for every graph` - All new graphs will be a different colors\
 `Delete graph after error` - If while drawing graph will be error occured program will delete this graph\
-`Graph switch` - Deletes all graphs before creating new
+`Graph switch` - Deletes all graphs before creating new\
+`Hide buttons` - Hide all buttons (will be used shortcuts instead)
 
 ### Customization
 `Background color` - Background color in program (default valuue is #1b1b1b)\
