@@ -116,11 +116,14 @@ KxGraph - a simple graphing calculator that can graph functions using Python.
 
 There is used built-in module named 'math'. Documentation and all functions: <a href="https://docs.python.org/3/library/math.html" target="_blank">https://docs.python.org/3/library/math.html</a>
 
-
 ## Operators and built-in functions:
 `|` - splits your graph and allows you to create several graphs in one line\
 Example: `x | x+2 | x*2` - Will create a 3 graphs\
-Example №2: `math.sin(x) | math.cos(x)` - Sine wave and cosine wave
+Example №2: `sin(x) | math.cos(x)` - Sine wave and cosine wave
+
+`loop(function, **kwargs (start*, end))` - Works like a loop and saves iteration in variable 'item'\
+Example: `loop('x*item', start=0, end=5)` - Makes a five graphs with functions x*0, x\*1, x\*2, etc.\
+Example №2: `loop('sin(x/item)*item', end=10)` - Makes a ten sine waves, that are getting bigger and bigger (math.sin(x/0)\*0, math.sin(x/1)\*1, math.sin(x/2)\*2...)
 
 `isprime(num)` - Checks for a prime number, if it prime - returns True (1), else returns False (0)\
 Example: `isprime(7)` - Returns 1 because 7 is prime number\
@@ -131,9 +134,24 @@ Example: `get_prime(3)` - Returns 5, because this is a 3rd prime number (2, 3, *
 Example №2: `get_prime(4)` - Returns 7, 4th prime number. (2, 3, 5, **7**)\
 Example №3: `get_prime(10)` - Returns 27, (2, 3, 5, 7, 11, 13, 17, 19, 23, **27**)
 
-`loop(function, **kwargs (start*, end))` - Works like a loop and saves iteration in variable 'item'\
-Example: `loop('x*item', start=0, end=5)` - Makes a five graphs with functions x*0, x\*1, x\*2, etc.\
-Example №2: `loop('math.sin(x/item)*item', end=10)` - Makes a ten sine waves, that are getting bigger and bigger (math.sin(x/0)\*0, math.sin(x/1)\*1, math.sin(x/2)\*2...)
+`fibonacci(num)` - Returns a *num*th number in fibonacci sequence\
+Example: `fibonacci(5)` - Returns 13, because 13 is a 5th number in fibonacci sequence\
+Exmaple №2: `fibonacci(3)` - Returns 5 (5th fibonacci number)\
+Example №3: `fibonacci(16)` - Returns 2584 (16th fibonacci number)
+
+`fibonacci(num)` - Returns a *num*th number in fibonacci sequence\
+Example: `fibonacci(5)` - Returns 13, because 13 is a 5th number in fibonacci sequence\
+Exmaple №2: `fibonacci(3)` - Returns 5 (5th fibonacci number)\
+Example №3: `fibonacci(16)` - Returns 2584 (16th fibonacci number)
+
+`collatz(num)` - Returns a sequence of [Collatz conjecture](https://en.wikipedia.org/wiki/Collatz_conjecture) of num.\
+Example: `collatz(3)` - Returns [3, 10, 5, 16, 8, 4, 2, 1].\
+Example №2: `len(collatz(27))` - Returns 112 (the length of sequence of number 27)\
+Exmaple №3 `sorted(collatz(123))[-1]` - Returns the biggest number in sequence of number 123 (628)
+
+`divisiors(num)` - Returns a list of divisiors of num.\
+Example: `divisiors(10)` - Returns [1, 2, 5, 10] (all divisiors of number 10)\
+Example №2: `len(divisiors(10))` - Returns 4 (total divisiors)
 
 ## Shortcuts in KxGraph (graph.py)
 
