@@ -114,12 +114,13 @@ KxGraph - a simple graphing calculator that can graph functions using Python.
 `math.tan(x)` - tangent graph.\
 `math.exp(x)` - exponent graph.
 
-There is used built-in module named 'math'. Documentation and all functions: <a href="https://docs.python.org/3/library/math.html" target="_blank">https://docs.python.org/3/library/math.html</a>
+There is used built-in module named 'math'. Documentation and all functions:\
+<a href="https://docs.python.org/3/library/math.html" target="_blank">https://docs.python.org/3/library/math.html</a>
 
 ## Operators and built-in functions:
 `|` - splits your graph and allows you to create several graphs in one line\
 Example: `x | x+2 | x*2` - Will create a 3 graphs\
-Example №2: `sin(x) | math.cos(x)` - Sine wave and cosine wave
+Example №2: `sin(x) | cos(x)` - Sine wave and cosine wave
 
 `loop(function, **kwargs (start*, end))` - Works like a loop and saves iteration in variable 'item'\
 Example: `loop('x*item', start=0, end=5)` - Makes a five graphs with functions x*0, x\*1, x\*2, etc.\
@@ -153,6 +154,12 @@ Exmaple №3 `sorted(collatz(123))[-1]` - Returns the biggest number in sequence
 Example: `divisiors(10)` - Returns [1, 2, 5, 10] (all divisiors of number 10)\
 Example №2: `len(divisiors(10))` - Returns 4 (total divisiors)
 
+`nextprime(num)` - Returns a next prime number of num.\
+Example: `nextprime(10)` - Returns 11, because 11 is a next prime number of 10
+
+`prevprime(num)` - Returns a previous prime number of num.\
+Example: `prevprime(10)` - Returns 7, because 7 is a previous prime number of 10
+
 ## Shortcuts in KxGraph (graph.py)
 
 `Enter`, `F5` - Create graph\
@@ -160,7 +167,7 @@ Example №2: `len(divisiors(10))` - Returns 4 (total divisiors)
 `Ctrl+P`, `Tab` - Settings\
 `Ctrl+G` - Color table\
 `Delete` - Clear\
-`Esc` - Delete graph by index in settings\
+`Esc` - Delete graph by index\
 `Ctrl+Esc` - Delete last graph\
 `Shift+Esc` - Delete first graph\
 `Ctrl+S` - Save graph as file
