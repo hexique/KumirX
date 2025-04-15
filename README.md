@@ -126,6 +126,9 @@ Example №2: `sin(x) | cos(x)` - Sine wave and cosine wave
 Example: `loop('x*item', start=0, end=5)` - Makes a five graphs with functions x*0, x\*1, x\*2, etc.\
 Example №2: `loop('sin(x/item)*item', end=10)` - Makes a ten sine waves, that are getting bigger and bigger (math.sin(x/0)\*0, math.sin(x/1)\*1, math.sin(x/2)\*2...)
 
+`switch(*args)` - Joins n graphs in one\
+Example: `switch('sin(x/10)*10', '0')` - Draws a sinusoid and 0 function at one graph
+
 `isprime(num)` - Checks for a prime number, if it prime - returns True (1), else returns False (0)\
 Example: `isprime(7)` - Returns 1 because 7 is prime number\
 Exmaple №2: `isprime(9)` - Returns 0 because 9 is not prime number (divisior is 7)
