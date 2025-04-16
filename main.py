@@ -1,12 +1,11 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
+from json import load as loadjson
 from time import time
 import math, random
 
-with open('version.dat') as f:
-    file = f.read()
-    __ver__ = file.split()[0]
-    __date__ = file.split()[1]
+with open('version.json') as f:
+    __ver__ = loadjson(f)['ver']
 
 if __name__ == '__main__':
     root = tk.Tk()
