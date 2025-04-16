@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from webbrowser import open as openpage
 from time import time, ctime
-from json import load as loadjson
+from json import load as loadjson, dump, dumps, loads
 
 from graphfunc import *
 import random
@@ -25,12 +25,14 @@ if __name__ == '__main__':
     root.iconphoto(True,photo)
     root.config(background='#1b1b1b')
 
-    step = 1
+    step = 'x+1'
     scale = '10'
     offset = {'x': 30, 'y': 40}
     index = -1
     default_graphcol = '#ffffff'
+    x = -offset['x']
     audit = []
+    key_objs = [[], []]
 
     switch_color = tk.BooleanVar(value=True)
     error_graph = tk.BooleanVar(value=True)
@@ -38,13 +40,32 @@ if __name__ == '__main__':
     hide_btn = tk.BooleanVar(value=False)
 
     colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff']
+    shortcuts = {'Return': 'graph(function=func.get())',
+                 'F5': 'graph(function=func.get())',
+                 'Delete': 'reset()',
+                 'Escape': 'delete(index)',
+                 'Control-Escape': 'delete(-1)',
+                 'Shift-Escape': 'delete(0)',
+                 'Control-p': 'settings()',
+                 'Tab': 'settings()',
+                 'Control-s': 'save(audit)',
+                 'Control-o': 'load()',
+                 'Control-g': 'colortable()'}
+
+    def switch(*args):
+        if type(args[0]) == list:
+            return eval(args[0][int(x) % len(args[0])], globals(), locals())
+        return eval(args[int(x) % len(args)], globals(), locals())
+
+def tojson(text):
+    return str(text).replace("'", '"').replace("True", "true").replace("False", "true").replace("<", '"<').replace(">", '>"').replace(", ", ",\n")
 
 def format_dictionary(dict):
     result = ''
     for graph in dict:
         result += f'''Function: {graph['function']}\n
 Graph: {graph['graphs']}
-Scale: {graph['scale']} ({eval(graph['function'])})
+Scale: {graph['scale']} ({eval(graph['scale'])})
 Step: {graph['step']}
 Offset X: {graph['offset']['x']}
 Offset Y: {graph['offset']['y']}
@@ -67,6 +88,7 @@ Total dots of all time: {graph['alltime_total']}
     return result
             
 
+
 def save(text):
     file_path = filedialog.asksaveasfilename(
             initialfile=f"{func.get()}.txt",
@@ -85,7 +107,11 @@ def save(text):
                 f.write(str(text))
         elif file_path.endswith('.json'):
             with open(file_path, "w", encoding="utf-8") as f:
-                f.write(str(text).replace("'", '"').replace("True", "true").replace("False", "true").replace("<", '"<').replace(">", '>"').replace(", ", ",\n"))
+                temp_audit = audit.copy()
+                for graph in temp_audit:
+                    for dot in graph['dots']:
+                        dot.pop('object', None)
+                f.write(dumps(temp_audit))
                 # f.write(str(dumps(text)))
 
 def load():
@@ -107,17 +133,32 @@ def load():
             
 
 def save_settings():
-    with open('props.dat', 'w') as f:
-        f.write(f'{step} {scale} {offset["x"]} {offset["y"]} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {linex["bg"]}')
-    with open('props.dat', 'r') as f:
-        print(f'Properties are saved ({f.read()})')
+    try:
+        props = {"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors}
+    except Exception as e:
+        print(f'Error occured while settings save {e}')
+        return
+    with open('props.json', "w", encoding="utf-8") as f:
+        print({"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors})
+        f.write(f'{dump(props, f, indent=4)}'[:-4])
+    # with open('props.json', 'w') as f:
+    #     try:
+    #         props = tojson({"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors})
+    #         props = {"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors}
+    #         # props = tojson({"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors})
+    #         f.write(props)
+    #         # print(f'Properties saved succesfuly ({props})')
+    #         # f.close()
+    #     except Exception as e:
+    #         print(e)
+        
 
 def save_settings_file():
     file_path = filedialog.asksaveasfilename(
-            initialfile=f"props.dat",
-            defaultextension=".dat",
+            initialfile=f"customprops.json",
+            defaultextension=".json",
             title="Save file",
-            filetypes=[("Raw file", "*.dat"), ("Text file", "*.txt"), ("All files", "*.*")]
+            filetypes=[("JSON file", "*.json"), ("Dat file", "*.dat"), ("Text file", "*.txt"), ("All files", "*.*")]
     )
 
     if file_path:
@@ -145,11 +186,15 @@ Colors: {' '.join(colors)}
         elif file_path.endswith('.dat'):
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(f'{step} {scale} {offset["x"]} {offset["y"]} {index} {switch_color.get()} {error_graph.get()} {one_graph_max.get()} {hide_btn.get()} {root.cget("bg")} {default_graphcol} {linex["bg"]}')
+        elif file_path.endswith('.json'):
+            with open(file_path, "w", encoding="utf-8") as f:
+                props = {"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors}
+                f.write(f'{dump(props, f, indent=4)}')
 
 def load_settings_file():
     file_path = filedialog.askopenfilename(
             title="Open file",
-            filetypes=[("Raw file", "*.dat"), ("Text file", "*.txt"), ("All files", "*.*")]
+            filetypes=[("JSON file", "*.json"), ("Text file", "*.txt"), ("Dat file", "*.dat"), ("Text file", "*.txt"), ("All files", "*.*")]
     )
     if file_path:
         load_settings(file_path)
@@ -157,24 +202,41 @@ def load_settings_file():
 def load_settings(path):
     global step, scale, offset, index, default_graphcol, switch_color, error_graph
     with open(path, 'r') as f:
-        file = f.read()
-        file = file.split()
+        # file = f.read()
+        # file = file.split()
 
-        step = float(file[0])
-        scale = file[1]
-        offset['x'] = float(file[2])
-        offset['y'] = float(file[3])
-        index = int(file[4])
+        # step = float(file[0])
+        # scale = file[1]
+        # offset['x'] = float(file[2])
+        # offset['y'] = float(file[3])
+        # index = int(file[4])
         
-        switch_color.set(file[5] == 'True')
-        error_graph.set(file[6] == 'True')
-        one_graph_max.set(file[7] == 'True')
-        hide_btn.set(file[8] == 'True')
+        # switch_color.set(file[5] == 'True')
+        # error_graph.set(file[6] == 'True')
+        # one_graph_max.set(file[7] == 'True')
+        # hide_btn.set(file[8] == 'True')
 
-        root.config(background=file[9])
-        default_graphcol = file[0]
-        linex['bg'] = file[11]
-        liney['bg'] = file[11]
+        # root.config(background=file[9])
+        # default_graphcol = file[0]
+        # linex['bg'] = file[11]
+        # liney['bg'] = file[11]
+        file = loadjson(f)
+
+        step = file['step']
+        scale = file['scale']
+        offset['x'] = file['offset']['x']
+        offset['y'] = file['offset']['y']
+        index = file['index']
+        
+        switch_color.set(file['switch_color'])
+        error_graph.set(file['error_graph'])
+        one_graph_max.set(file['one_graph_max'])
+        hide_btn.set(file['hide_btn'])
+
+        root.config(background=file['bg'])
+        default_graphcol = file['graphcol']
+        linex['bg'] = file['linecol']
+        liney['bg'] = file['linecol']
 
     save_settings()
 
@@ -242,9 +304,10 @@ def show_audit(text):
 
 
     audit_root.mainloop()
+
 def graph(**kwargs):
     global x, audit, colors
-    function = kwargs['function'] # i will fix this later
+    function = kwargs["function"] # i will fix this later
     if '|' in function:
         for i in function.split('|'):
             graph(function=i)
@@ -283,33 +346,38 @@ def graph(**kwargs):
         audit[-1]['colors'] = colors
 
     while True:
-        if x > int(root.winfo_width()/10):
+        if x > int(root.winfo_width()/eval(scale, globals())):
             break
         try:
-            if eval(function, globals())+offset['y'] >= root.winfo_height()/10-2: 
-                print(eval(function, globals())+offset['y'], root.winfo_height()/10-2)
-                x += step
+            if eval(f'-({function})', globals())+offset['y'] >= root.winfo_height()/eval(scale)-2 and x-offset['x'] <= 0: 
+                print(eval(function, globals())+offset['y'], root.winfo_height()/eval(scale)-2)
+                x = eval(step, globals(), locals())
+                print('x:', x)
                 continue
             else:
                 dot = tk.Canvas(root, width=eval(scale, globals()), height=eval(scale, globals()), highlightthickness=0, bg=color)
-                dot.place(x=(x+offset['x'])*10,y=(eval(f'-({function})', globals())+offset['y'])*10)
+                dot.place(x=(x+offset['x'])*eval(scale, globals()),y=(eval(f'-({function})', globals())+offset['y'])*eval(scale, globals()))
+                if x == eval(step, globals(), locals()) and len(audit[-1]['dots']) >= root.winfo_width()/eval(scale):
+                    break
+                print('x:', x)
                 if 'loop' not in function and 'modify' not in kwargs.keys():
                     audit[-1]['dots'].append({})
                     audit[-1]['dots'][-1]['x'] = x
                     audit[-1]['dots'][-1]['y'] = eval(function, globals())
                     audit[-1]['dots'][-1]['object'] = dot
         except ZeroDivisionError:
-            x += step
+            x = eval(step, globals(), locals())
             continue
         except IndexError:
             pass
         except Exception as e:
-            if 'looped' not in kwargs.keys():
+            if 'looped' not in kwargs.keys() and 'sqrt' not in kwargs.keys():
                 messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}')
                 if error_graph.get():
                     delete(index)
                 return 
-        x += step
+            pass
+        x = eval(step, globals(), locals())
     if 'loop' not in function and 'modify' not in kwargs.keys():
         total_dots = 0
         for i in audit:
@@ -338,7 +406,8 @@ def delete(index):
     audit.pop(index)
     
 def update_settings():
-    apply_btn.place(x=settings_root.winfo_width()-100,y=settings_root.winfo_height()-40)
+    cust_btn.place(x=settings_root.winfo_width()-100,y=settings_root.winfo_height()-40)
+    keys_btn.place(x=settings_root.winfo_width()-170,y=settings_root.winfo_height()-40)
 
 def update_color(event):
     colors_label.place(x=70,y=color_root.winfo_height()-100)
@@ -368,44 +437,6 @@ def deletecol(index):
     global colors
     colors.pop(index)
     colors_display['text'] = ' '.join(colors)
-
-def apply():
-    global step, offset, index, scale, default_graphcol, linex, liney
-    global bgcol_preview, graphcol_entry, offsetx_entry, colors_preview
-    try:
-        step = float(step_entry.get()) 
-        offset['x'] = float(offsetx_entry.get())
-        offset['y'] = float(offsety_entry.get())
-        print('offset', offset)
-        index = int(index_entry.get())
-        scale = scale_entry.get()
-
-        linex.place(x=0,y=offset['x']*eval(scale, globals()))
-        print(0, offset['x']*eval(scale, globals()), eval(scale, globals()))
-        linex['height'] = eval(scale, globals())
-
-        liney.place(y=0,x=offset['y']*eval(scale, globals()))
-        print(offset['y']*eval(scale, globals()), 0, eval(scale, globals()))
-        liney['width'] = eval(scale, globals())
-        try:
-            liney['bg'] = offsetcol_entry.get()
-            linex['bg'] = offsetcol_entry.get()
-        except:
-            pass
-
-        root.config(background=bgcol_entry.get())
-        default_graphcol = graphcol_entry.get()
-        if hide_btn.get():
-            submit.destroy()
-            clear.destroy()
-            delete_graph.destroy()
-        bgcol_preview['bg'] = root.cget('bg')
-        graphcol_preview['bg'] = default_graphcol
-        offsetcol_preview['bg'] = offsetcol_entry.get()
-        colors_preview['bg'] = colors_entry.get()
-        save_settings()
-    except: 
-        save_settings()
 
 def colorsettings():
     global color_root, offsetcol_entry, bgcol_entry, graphcol_entry, colors_entry, colors_display, colors_label
@@ -468,8 +499,89 @@ def colorsettings():
     color_root.bind('<Configure>', update_color)
     color_root.mainloop()
 
+def apply_keys():
+    global shortcuts
+    shortcuts = {} # spaghetti code goes brrrrrr 💀
+    for shortcut in range(len(key_objs[0])):
+        shortcuts[key_objs[0][shortcut].get()] = key_objs[1][shortcut].get()
+
+
+
+def keys_settings():
+    global key_entry, action_entry, key_objs
+    key_root = tk.Toplevel(root)
+    key_root.title(f'KxGraph {__ver__}')
+    key_root.geometry('500x500')
+    key_root.config(background='#1b1b1b')
+
+    tk.Label(key_root, text='Shortcuts', fg='white', bg='#1b1b1b', font=('Arial',30)).grid(row=0,column=0,padx=10)
+
+    key_objs = [[], []]
+
+    i = 1
+    for key in shortcuts:
+        key_entry = tk.Entry(key_root, width=10, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
+        key_objs[0].append(key_entry)
+        key_entry.insert(0, key)
+        key_entry.bind("<KeyRelease>", lambda event: apply_keys())
+        key_entry.grid(row=i, column=0, pady=5)
+
+        action_entry = tk.Entry(key_root, width=30, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
+        key_objs[1].append(action_entry)
+        action_entry.insert(0, shortcuts[key])
+        action_entry.bind("<KeyRelease>", lambda event: apply_keys())
+        action_entry.grid(row=i, column=1, pady=5)
+        i += 1
+
+    # tk.Label(key_root, text='Background color', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=95,y=60)
+    # bgcol_entry = tk.Entry(key_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
+    # bgcol_entry.insert(0, root.cget('bg'))
+    # bgcol_entry.place(x=35,y=60)
+    # bgcol_entry.bind("<KeyRelease>", lambda event: apply())
+
+    #key_root.bind('<Configure>', update_color)
+    key_root.mainloop()
+
+def apply():
+    global step, offset, index, scale, default_graphcol, linex, liney
+    global bgcol_preview, graphcol_entry, offsetx_entry, colors_preview
+    try:
+        step = step_entry.get()
+        offset['x'] = float(offsetx_entry.get())
+        offset['y'] = float(offsety_entry.get())
+        print('offset', offset)
+        index = int(index_entry.get())
+        scale = scale_entry.get()
+
+        linex.place(y=0,x=offset['x']*eval(scale, globals()))
+        print(0, offset['x']*eval(scale, globals()), eval(scale, globals()))
+        linex['width'] = eval(scale, globals())
+
+        liney.place(x=0,y=offset['y']*eval(scale, globals()))
+        print(offset['y']*eval(scale, globals()), 0, eval(scale, globals()))
+        liney['height'] = eval(scale, globals())
+        try:
+            liney['bg'] = offsetcol_entry.get()
+            linex['bg'] = offsetcol_entry.get()
+        except:
+            pass
+
+        root.config(background=bgcol_entry.get())
+        default_graphcol = graphcol_entry.get()
+        if hide_btn.get():
+            submit.destroy()
+            clear.destroy()
+            delete_graph.destroy()
+        bgcol_preview['bg'] = root.cget('bg')
+        graphcol_preview['bg'] = default_graphcol
+        offsetcol_preview['bg'] = offsetcol_entry.get()
+        colors_preview['bg'] = colors_entry.get()
+        save_settings()
+    except: 
+        save_settings()
+
 def settings():
-    global settings_root, apply_btn, switch_color, error_graph, one_graph_max, step_entry, offsetx_entry, offsety_entry, index_entry, scale_entry, hide_btn
+    global settings_root, cust_btn, switch_color, error_graph, one_graph_max, step_entry, offsetx_entry, offsety_entry, index_entry, scale_entry, hide_btn, keys_btn
     settings_root = tk.Toplevel(root)
     settings_root.title(f'KxGraph {__ver__}')
     settings_root.geometry('500x500')
@@ -479,7 +591,7 @@ def settings():
 
     tk.Label(settings_root, text='Step', fg='white', bg='#1b1b1b', font=('Arial',10)).place(x=70,y=60)
     step_entry = tk.Entry(settings_root, width=8, bg='#1b1b1b', fg='white', font=('Arial',10), insertbackground='white')
-    step_entry.insert(0, str(step))
+    step_entry.insert(0, step)
     step_entry.place(x=10,y=60)
     step_entry.bind("<KeyRelease>", lambda event: apply())
 
@@ -512,12 +624,14 @@ def settings():
     tk.Checkbutton(settings_root, text='Graph switch', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=one_graph_max, command=apply).place(x=10,y=240)
     tk.Checkbutton(settings_root, text='Hide buttons', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=hide_btn, command=apply).place(x=10,y=270)
 
-    apply_btn = tk.Button(settings_root, text='Customization', fg='white', bg='#1b1b1b', command=colorsettings)
-    apply_btn.place(x=420,y=460)
-    
+    cust_btn = tk.Button(settings_root, text='Customization', fg='white', bg='#1b1b1b', command=colorsettings)
+    cust_btn.place(x=420,y=460)
+    keys_btn = tk.Button(settings_root, text='Shortcuts', fg='white', bg='#1b1b1b', command=keys_settings)
+    keys_btn.place(x=420,y=460)
+
     settings_root.bind("<Configure>", lambda event: update_settings())
     settings_root.bind("<Return>", lambda event: apply())
-
+    apply()
     settings_root.mainloop()
 
 def update_widjets(event):
@@ -532,9 +646,9 @@ def insert_pattern(function):
 
 
 if __name__ == '__main__':
-    linex = tk.Canvas(root, width=2000, height=eval(scale, globals()), bg='#2d2d2d', highlightthickness=0)
+    linex = tk.Canvas(root, height=2000, width=eval(scale, globals()), bg='#2d2d2d', highlightthickness=0)
     linex.place(y=0, x=offset['x']*10)
-    liney = tk.Canvas(root, height=2000, width=eval(scale, globals()), bg='#2d2d2d', highlightthickness=0)
+    liney = tk.Canvas(root, width=2000, height=eval(scale, globals()), bg='#2d2d2d', highlightthickness=0)
     liney.place(x=0, y=offset['y']*10)
 
     func = tk.Entry(root, bg='#1b1b1b', fg='white', insertbackground='white')
@@ -559,12 +673,15 @@ if __name__ == '__main__':
     root.bind("<Control-g>", lambda event: colortable())
     root.bind("<Tab>", lambda event: settings())
 
+    for i in shortcuts:
+        root.bind(f"<{i}>", lambda event, i=i: exec(shortcuts[i], globals()))
+
     menu = tk.Menu(root)  
 
     fileMenu = tk.Menu(menu, tearoff=0)
     fileMenu.add_command(label="Reset",command=reset)
     fileMenu.add_command(label="Create graph",command=lambda: graph(function=func.get()))
-    fileMenu.add_command(label="Reset settings",command=lambda: load_settings('propsdef.dat'))
+    fileMenu.add_command(label="Reset settings",command=lambda: load_settings('propsdef.json'))
     fileMenu.add_separator()
     fileMenu.add_command(label="Save",command=lambda: save(audit))
     fileMenu.add_command(label="Load",command=load)
@@ -594,29 +711,30 @@ if __name__ == '__main__':
     menu.add_cascade(label="Roots", menu=rootMenu)
 
     patternsMenuUpscaled = tk.Menu(menu, tearoff=0)
-    patternsMenuUpscaled.add_command(label="Sine wave",command=lambda: insert_pattern('math.sin(x/10)*10'))
-    patternsMenuUpscaled.add_command(label="Cosine wave",command=lambda: insert_pattern('math.cos(x/10)*10'))
-    patternsMenuUpscaled.add_command(label="Tangent",command=lambda: insert_pattern('math.tan(x/10)*10'))
-    patternsMenuUpscaled.add_command(label="Exponent",command=lambda: insert_pattern('math.exp(x/10)*10'))
+    patternsMenuUpscaled.add_command(label="Sine wave",command=lambda: insert_pattern('sin(x/10)*10'))
+    patternsMenuUpscaled.add_command(label="Cosine wave",command=lambda: insert_pattern('cos(x/10)*10'))
+    patternsMenuUpscaled.add_command(label="Tangent",command=lambda: insert_pattern('tan(x/10)*10'))
+    patternsMenuUpscaled.add_command(label="Exponent",command=lambda: insert_pattern('exp(x/10)*10'))
     patternsMenuUpscaled.add_command(label="Parabol",command=lambda: insert_pattern('x/10**2*10'))
     patternsMenuUpscaled.add_command(label="Multiplicative inverse",command=lambda: insert_pattern('10/x'))
-    patternsMenuUpscaled.add_command(label="Square root",command=lambda: insert_pattern('math.sqrt(x/10)*10'))
+    patternsMenuUpscaled.add_command(label="Square root",command=lambda: insert_pattern('sqrt(x/10)*10'))
 
     patternsMenu = tk.Menu(menu, tearoff=0)
-    patternsMenu.add_command(label="Sine wave",command=lambda: insert_pattern('math.sin(x)'))
-    patternsMenu.add_command(label="Cosine wave",command=lambda: insert_pattern('math.cos(x)'))
-    patternsMenu.add_command(label="Tangent",command=lambda: insert_pattern('math.tan(x)'))
-    patternsMenu.add_command(label="Exponent",command=lambda: insert_pattern('math.exp(x)'))
+    patternsMenu.add_command(label="Sine wave",command=lambda: insert_pattern('sin(x)'))
+    patternsMenu.add_command(label="Cosine wave",command=lambda: insert_pattern('cos(x)'))
+    patternsMenu.add_command(label="Tangent",command=lambda: insert_pattern('tan(x)'))
+    patternsMenu.add_command(label="Exponent",command=lambda: insert_pattern('exp(x)'))
     patternsMenu.add_command(label="Parabol",command=lambda: insert_pattern('x**2'))
     patternsMenu.add_command(label="Multiplicative inverse",command=lambda: insert_pattern('1/x'))
-    patternsMenu.add_command(label="Square root",command=lambda: insert_pattern('math.sqrt(x)'))
+    patternsMenu.add_command(label="Square root",command=lambda: insert_pattern('sqrt(x)'))
     patternsMenu.add_separator()
     patternsMenu.add_cascade(label="Upscaled",menu=patternsMenuUpscaled)
 
     menu.add_cascade(label="Patterns", menu=patternsMenu)
 
     root.config(menu=menu)
-    load_settings('props.dat')
+    load_settings('props.json')
     settings()
     apply()
+
     root.mainloop()

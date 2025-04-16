@@ -1,0 +1,25 @@
+{
+    "step": "x+1",
+    "scale": "10",
+    "offset": {
+        "x": 40.0,
+        "y": 40.0
+    },
+    "index": -1,
+    "switch_color": true,
+    "error_graph": true,
+    "one_graph_max": false,
+    "hide_btn": false,
+    "bg": "#323339",
+    "graphcol": "#ffffff",
+    "linecol": "#393a41",
+    "colors": [
+        "#ff0000",
+        "#00ff00",
+        "#0000ff",
+        "#ffff00",
+        "#00ffff",
+        "#ff00ff",
+        "#ffffff"
+    ]
+}
