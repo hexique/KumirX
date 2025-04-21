@@ -74,7 +74,7 @@ Example №2: `word:hello-world` - Displays a pixel text 'hello world' (hyphen i
 Example: `for:5:d_sw` - 5 times move diagonaly (use underscore instead of space).\
 Example №2: `for:6:right:5` - Go right 5 times by 6 times (5*6=30).\
 Example №3: `for:7:pos:item:5_p` - Paint an every tile by y from 0 to 7.\
-Example №4: `sc:5for:100:pos%item%(math.sin(item)+5)*5_p` - Draws a sinusoid.
+Example №4: `sc:5for:100:pos%item%(sin(item)+5)*5_p` - Draws a sinusoid.
 
 `func`, `fun`, `f` - Declarates or induces a function.\
 Example: `func:go-right:d` - Creates a function, that goes right\
@@ -109,10 +109,10 @@ KxGraph - a simple graphing calculator that can graph functions using Python.
 `0` - straight line at 0.\
 `x` - diagonal.\
 `x**2` - square graph.\
-`math.sin(x)` - sinusoid.\
-`math.sin(x/10)*10` - more detailed sinusoid.\
-`math.tan(x)` - tangent graph.\
-`math.exp(x)` - exponent graph.
+`sin(x)` - sinusoid.\
+`sin(x/10)*10` - more detailed sinusoid.\
+`tan(x)` - tangent graph.\
+`exp(x)` - exponent graph.
 
 There is used built-in module named 'math'. Documentation and all functions:\
 <a href="https://docs.python.org/3/library/math.html" target="_blank">https://docs.python.org/3/library/math.html</a>
@@ -124,7 +124,7 @@ Example №2: `sin(x) | cos(x)` - Sine wave and cosine wave
 
 `loop(function, **kwargs (start*, end))` - Works like a loop and saves iteration in variable 'item'\
 Example: `loop('x*item', start=0, end=5)` - Makes a five graphs with functions x*0, x\*1, x\*2, etc.\
-Example №2: `loop('sin(x/item)*item', end=10)` - Makes a ten sine waves, that are getting bigger and bigger (math.sin(x/0)\*0, math.sin(x/1)\*1, math.sin(x/2)\*2...)
+Example №2: `loop('sin(x/item)*item', end=10)` - Makes a ten sine waves, that are getting bigger and bigger (sin(x/0)\*0, sin(x/1)\*1, sin(x/2)\*2...)
 
 `switch(*args)` - Joins n graphs in one\
 Example: `switch('sin(x/10)*10', '0')` - Draws a sinusoid and 0 function at one graph
