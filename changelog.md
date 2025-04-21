@@ -1,3 +1,25 @@
+## 1.8.2 [16.04.2025]
+- Added shortcuts settings
+- Settings is JSON now
+- Fixed main file
+
+## 1.8.1 [13.04.2025]
+- Added offset x
+- Added 'from x import *'
+- Version file is JSON now
+- Changed audit save system
+- The built-in modules now in other file
+- Added commands 'divisiors', 'collatz', 'nextprime', 'prevprime', 'fibonacci'
+- Fixed offset color setting
+
+## 1.8.1 [13.04.2025]
+- Added JSON file load
+- Added show info in graph table
+- Added 'patterns' menu
+- Fixed color display in graph table
+- Fixed 'loop' command
+- Added exception in color table
+
 ## 1.8 [12.04.2025]
 - Added JSON file load
 - Added show info in graph table
