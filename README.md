@@ -163,6 +163,9 @@ Example: `nextprime(10)` - Returns 11, because 11 is a next prime number of 10
 `prevprime(num)` - Returns a previous prime number of num.\
 Example: `prevprime(10)` - Returns 7, because 7 is a previous prime number of 10
 
+`cond(cond=x, func=y)` - Returns a value of function if cond\
+Example: `cond(x >= 0, sqrt(x))` - If x >= 0: return sqrt(x). Otherwise return infinity
+
 ## Shortcuts in KxGraph (graph.py)
 
 `Enter`, `F5` - Create graph\
