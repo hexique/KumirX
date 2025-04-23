@@ -1,6 +1,5 @@
 # graphfunc
 from graph import *
-from functools import cache, wraps
 from time import time
 
 # def memory(func):
@@ -73,9 +72,16 @@ def prevprime(n):
 def average(list):
     return sum(list) / len(list)
 
+def cond(**kwargs):
+    if kwargs['cond']:
+        return kwargs['func']
+    else:
+        return inf
+
+
 
 if __name__ == '__main__':
     start = time()
-    print(10.995574287564276/2)
+    print(divisiors(10))
     print(time() - start)
 
