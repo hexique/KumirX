@@ -169,11 +169,12 @@ Example: `prevprime(10)` - Returns 7, because 7 is a previous prime number of 10
 `Enter` (in settings) - Apply\
 `Ctrl+P`, `Tab` - Settings\
 `Ctrl+G` - Color table\
+`Ctrl+O` - Load JSON\
+`Ctrl+S` - Save JSON\
 `Delete` - Clear\
 `Esc` - Delete graph by index\
 `Ctrl+Esc` - Delete last graph\
 `Shift+Esc` - Delete first graph\
-`Ctrl+S` - Save graph as file
 
 ## Settings in KxGraph
 ### Main settings
