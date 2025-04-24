@@ -372,7 +372,10 @@ def graph(**kwargs):
             pass
         except Exception as e:
             if 'looped' not in kwargs.keys() and 'sqrt' not in kwargs.keys():
-                messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}')
+                if len(audit) > 0:
+                    messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}\nx = {x}\nDots total: {len(audit[-1]["dots"])}')
+                else:
+                    messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}\nx = {x}\nDots total: undefined')
                 if error_graph.get():
                     delete(index)
                 return 
