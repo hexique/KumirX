@@ -1,6 +1,18 @@
 # graphfunc
 from graph import *
 from time import time
+from math import inf
+import random
+
+whitespace = ' \t\n\r\v\f'
+ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
+ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+ascii_letters = ascii_lowercase + ascii_uppercase
+digits = '0123456789'
+hexdigits = digits + 'abcdef' + 'ABCDEF'
+octdigits = '01234567'
+punctuation = r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
+printable = digits + ascii_letters + punctuation + whitespace
 
 # def memory(func):
 #     cache = {}
@@ -72,16 +84,39 @@ def prevprime(n):
 def average(list):
     return sum(list) / len(list)
 
-def cond(**kwargs):
-    if kwargs['cond']:
-        return kwargs['func']
+def cond(condition: bool, func):
+    if condition:
+        return func
     else:
         return inf
 
+def strToInt(str: str) -> int:
+    result = ''
+    for i in str:
+        if i in digits:
+            result += i
+    while result.startswith('0'):
+        result = result[1:]
+    if result == '':
+        return 0
+    return int(result)
 
+def randomStr(length: int, symbols: str) -> int:
+    return ''.join([random.choice(symbols) for i in range(length)])
+
+def returnsError(func) -> bool:
+    try:
+        return func
+    except:
+        return inf
+
+def esqrt(num):
+    if num >= 0:
+        return sqrt(num)
+    else:
+        return inf
 
 if __name__ == '__main__':
-    start = time()
-    print(divisiors(10))
-    print(time() - start)
+    s = randomStr(50, ascii_letters + digits)
+    cond()
 
