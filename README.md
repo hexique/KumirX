@@ -163,10 +163,19 @@ Example: `nextprime(10)` - Returns 11, because 11 is a next prime number of 10
 `prevprime(num)` - Returns a previous prime number of num.\
 Example: `prevprime(10)` - Returns 7, because 7 is a previous prime number of 10
 
-`cond(cond=x, func=y)` - Returns a value of function if cond\
-Example: `cond(x >= 0, esqrt(x))` - If x >= 0: return esqrt(x). Otherwise return infinity\
-Example №2: `cond(x % 2 == 0, sin(x))` - If x is odd: draw a sinusoid\
-Example: `cond(x >= 0, sqrt(x))` - If x >= 0: return sqrt(x). Otherwise return infinity\
+`esqrt(num)` - Fixed version of math square root.\
+Example: `esqrt(9)` - Returns 3 (square root of 9)\
+Example №2: `esqrt(-5)` - Returns inf (because square root of -5 is not exist)
+
+`strToInt(text)` - Returns all digits from string and converts it to int.\
+Example: `strToInt(1s2s3s)` - Returns 123.\
+Example №2: `strToInt(k0kk15k02)` - Returns 1502. 
+
+
+`sha256(text)` - A hash function.\
+Example: `sha256('123')` - returns a665a45920...
+
+`randomStr(length, )`
 
 ## Shortcuts in KxGraph (graph.py)
 
