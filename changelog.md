@@ -1,7 +1,7 @@
 ## 1.8.23 [24.04.2025]
 - A lot of new functions (strToInt, randomStr, returnsError, esqrt)
 - Fixed sqrt function
-- 
+
 ## 1.8.21 [23.04.2025]
 - New function 'comp'
 
