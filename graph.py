@@ -38,6 +38,7 @@ if __name__ == '__main__':
     error_graph = tk.BooleanVar(value=True)
     one_graph_max = tk.BooleanVar(value=False)
     hide_btn = tk.BooleanVar(value=False)
+    invert_graph = tk.BooleanVar(value=True)
 
     colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff']
     shortcuts = {'Return': 'graph(function=func.get())',
@@ -306,7 +307,7 @@ def show_audit(text):
     audit_root.mainloop()
 
 def graph(**kwargs):
-    global x, audit, colors
+    global x, y, audit, colors
     function = kwargs["function"] # i will fix this later
     if '|' in function:
         for i in function.split('|'):
@@ -349,12 +350,18 @@ def graph(**kwargs):
         if x > int(root.winfo_width()/eval(scale, globals())):
             break
         try:
-            if eval(f'-({function})', globals())+offset['y'] >= root.winfo_height()/eval(scale)-2 and x-offset['x'] <= 0: 
-                print(eval(function, globals())+offset['y'], root.winfo_height()/eval(scale)-2)
-                x = eval(step, globals(), locals())
-                print('x:', x)
-                continue
+            inverted_func = function
+            if invert_graph.get():
+                inverted_func = f'-({function})'
+            
+                if eval(f'-({function})', globals())+offset['y'] >= root.winfo_height()/eval(scale)-2 and x-offset['x'] <= 0: 
+                    print(eval(function, globals())+offset['y'], root.winfo_height()/eval(scale)-2)
+                    x = eval(step, globals(), locals())
+                    print('x:', x)
+                    continue
+            
             else:
+                y = (eval(f'-({function})', globals())+offset['y'])*eval(scale, globals())
                 dot = tk.Canvas(root, width=eval(scale, globals()), height=eval(scale, globals()), highlightthickness=0, bg=color)
                 dot.place(x=(x+offset['x'])*eval(scale, globals()),y=(eval(f'-({function})', globals())+offset['y'])*eval(scale, globals()))
                 if x == eval(step, globals(), locals()) and len(audit[-1]['dots']) >= root.winfo_width()/eval(scale):
@@ -626,6 +633,7 @@ def settings():
     tk.Checkbutton(settings_root, text='Delete graph after error', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=error_graph, command=apply).place(x=10,y=210)
     tk.Checkbutton(settings_root, text='Graph switch', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=one_graph_max, command=apply).place(x=10,y=240)
     tk.Checkbutton(settings_root, text='Hide buttons', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=hide_btn, command=apply).place(x=10,y=270)
+    tk.Checkbutton(settings_root, text='Invert graph', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=invert_graph, command=apply).place(x=10,y=270)
 
     cust_btn = tk.Button(settings_root, text='Customization', fg='white', bg='#1b1b1b', command=colorsettings)
     cust_btn.place(x=420,y=460)

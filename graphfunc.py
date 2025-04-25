@@ -1,8 +1,8 @@
 # graphfunc
 from graph import *
-from time import time
-from math import inf
+from math import inf, sqrt
 import random
+import hashlib
 
 whitespace = ' \t\n\r\v\f'
 ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'
@@ -116,7 +116,12 @@ def esqrt(num):
     else:
         return inf
 
-if __name__ == '__main__':
-    s = randomStr(50, ascii_letters + digits)
-    cond()
+def sha256(text):
+    return hashlib.sha256(text.encode()).hexdigest()
 
+def logf(func):
+    print(func)
+    return 0
+
+if __name__ == '__main__':
+    print(sha256('123'))
