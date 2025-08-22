@@ -2,17 +2,18 @@
     "step": "x+1",
     "scale": "10",
     "offset": {
-        "x": 40.0,
-        "y": 40.0
+        "x": 4.0,
+        "y": 4.0
     },
     "index": -1,
     "switch_color": true,
     "error_graph": true,
     "one_graph_max": false,
     "hide_btn": false,
-    "bg": "#323339",
+    "hide_dot_info": false,
+    "bg": "#1b1b1b",
     "graphcol": "#ffffff",
-    "linecol": "#393a41",
+    "linecol": "#181818",
     "colors": [
         "#ff0000",
         "#00ff00",

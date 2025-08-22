@@ -24,6 +24,7 @@ if __name__ == '__main__':
     photo = tk.PhotoImage(file = 'icon.ico')
     root.iconphoto(True,photo)
     root.config(background='#1b1b1b')
+    root.wm_attributes("-transparentcolor", "#0a2b0d")
 
     step = 'x+1'
     scale = '10'
@@ -38,7 +39,7 @@ if __name__ == '__main__':
     error_graph = tk.BooleanVar(value=True)
     one_graph_max = tk.BooleanVar(value=False)
     hide_btn = tk.BooleanVar(value=False)
-    invert_graph = tk.BooleanVar(value=True)
+    hide_dot_info = tk.BooleanVar(value=True)
 
     colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ffffff']
     shortcuts = {'Return': 'graph(function=func.get())',
@@ -135,13 +136,13 @@ def load():
 
 def save_settings():
     try:
-        props = {"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors}
+        props = {"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(),  "hide_dot_info": hide_dot_info.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors}
     except Exception as e:
         print(f'Error occured while settings save {e}')
         return
     with open('props.json', "w", encoding="utf-8") as f:
-        print({"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors})
-        f.write(f'{dump(props, f, indent=4)}'[:-4])
+        print(props)
+        dump(props, f, indent=4)
     # with open('props.json', 'w') as f:
     #     try:
     #         props = tojson({"step": step, "scale": scale, "offset": offset, "index": index, "switch_color": switch_color.get(), "error_graph": error_graph.get(), "one_graph_max": one_graph_max.get(), "hide_btn": hide_btn.get(), "bg": root.cget("bg"), "graphcol": default_graphcol, "linecol": linex["bg"], "colors": colors})
@@ -159,7 +160,7 @@ def save_settings_file():
             initialfile=f"customprops.json",
             defaultextension=".json",
             title="Save file",
-            filetypes=[("JSON file", "*.json"), ("Dat file", "*.dat"), ("Text file", "*.txt"), ("All files", "*.*")]
+            filetypes=[("JSON file", "*.json"), ("Text file", "*.txt"), ("All files", "*.*")]
     )
 
     if file_path:
@@ -195,13 +196,13 @@ Colors: {' '.join(colors)}
 def load_settings_file():
     file_path = filedialog.askopenfilename(
             title="Open file",
-            filetypes=[("JSON file", "*.json"), ("Text file", "*.txt"), ("Dat file", "*.dat"), ("Text file", "*.txt"), ("All files", "*.*")]
+            filetypes=[("JSON file", "*.json")]
     )
     if file_path:
         load_settings(file_path)
 
 def load_settings(path):
-    global step, scale, offset, index, default_graphcol, switch_color, error_graph
+    global step, scale, offset, index, default_graphcol, switch_color, error_graph, hide_dot_info
     with open(path, 'r') as f:
         # file = f.read()
         # file = file.split()
@@ -233,6 +234,7 @@ def load_settings(path):
         error_graph.set(file['error_graph'])
         one_graph_max.set(file['one_graph_max'])
         hide_btn.set(file['hide_btn'])
+        hide_dot_info.set(file['hide_dot_info'])
 
         root.config(background=file['bg'])
         default_graphcol = file['graphcol']
@@ -330,7 +332,9 @@ def graph(**kwargs):
                     'dots': []})
     if switch_color.get():
         if len(audit) > len(colors):
-            color = '#%02X%02X%02X' % (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+            while True:
+                color = '#%02X%02X%02X' % (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+                if color != "#0a2b0d": break
             colors.append(color)
         else:
             color = colors[len(audit)-1]
@@ -350,19 +354,18 @@ def graph(**kwargs):
         if x > int(root.winfo_width()/eval(scale, globals())):
             break
         try:
-            inverted_func = function
-            if invert_graph.get():
-                inverted_func = f'-({function})'
-            
-                if eval(f'-({function})', globals())+offset['y'] >= root.winfo_height()/eval(scale)-2 and x-offset['x'] <= 0: 
-                    print(eval(function, globals())+offset['y'], root.winfo_height()/eval(scale)-2)
-                    x = eval(step, globals(), locals())
-                    print('x:', x)
-                    continue
+            function
+            if eval(function, globals())+offset['y'] >= root.winfo_height()/eval(scale)-2 and x-offset['x'] <= 0: 
+                print(eval(function, globals())+offset['y'], root.winfo_height()/eval(scale)-2)
+                x = eval(step, globals(), locals())
+                print('x:', x)
+                continue
             
             else:
-                y = (eval(f'-({function})', globals())+offset['y'])*eval(scale, globals())
+                y = (eval(function, globals())+offset['y'])*eval(scale, globals())
                 dot = tk.Canvas(root, width=eval(scale, globals()), height=eval(scale, globals()), highlightthickness=0, bg=color)
+                dot.bind("<Enter>", lambda event, x=x, y=y, function=function, dot=dot: display_dot_info(x, y, function, dot))
+                dot.bind("<Leave>", lambda event, x=x, y=y, function=function, dot=dot: display_dot_info(x, y, function, dot, hide=True)) 
                 dot.place(x=(x+offset['x'])*eval(scale, globals()),y=(eval(f'-({function})', globals())+offset['y'])*eval(scale, globals()))
                 if x == eval(step, globals(), locals()) and len(audit[-1]['dots']) >= root.winfo_width()/eval(scale):
                     break
@@ -378,14 +381,14 @@ def graph(**kwargs):
         except IndexError:
             pass
         except Exception as e:
-            if 'looped' not in kwargs.keys() and 'sqrt' not in kwargs.keys():
-                if len(audit) > 0:
-                    messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}\nx = {x}\nDots total: {len(audit[-1]["dots"])}')
-                else:
-                    messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}\nx = {x}\nDots total: undefined')
-                if error_graph.get():
-                    delete(index)
-                return 
+            # if 'looped' not in kwargs.keys() and 'sqrt' not in kwargs.keys():
+            #     if len(audit) > 0:
+            #         messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}\nx = {x}\nDots total: {len(audit[-1]["dots"])}')
+            #     else:
+            #         messagebox.showerror('KxGraph',f'Error occured while drawing a graph\n\n{e}\nx = {x}\nDots total: undefined')
+            #     if error_graph.get():
+            #         delete(index)
+            #     return 
             pass
         x = eval(step, globals(), locals())
     if 'loop' not in function and 'modify' not in kwargs.keys():
@@ -399,6 +402,17 @@ def graph(**kwargs):
     if len(audit) != 0:
         print(f'Total dots: {len(audit[-1]["dots"])}')
             
+def display_dot_info(x, y, function, dot_obj, hide=False):
+    #0a2b0d
+    if hide and hide_dot_info.get():
+        dot_info["fg"] = root.cget("bg")
+        dot_info["text"] = ""
+        return
+    elif hide:
+        return
+    dot_info["fg"] = dot_obj["bg"]
+    dot_info["text"] = f"Function: {function}\nx: {x}\ny: {y}"
+
 def reset():
     # tk.Canvas(root, width=root.winfo_width(), height=root.winfo_height()-20, bg='#1b1b1b', highlightthickness=0).place(x=0,y=0)
     global object, audit
@@ -633,7 +647,7 @@ def settings():
     tk.Checkbutton(settings_root, text='Delete graph after error', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=error_graph, command=apply).place(x=10,y=210)
     tk.Checkbutton(settings_root, text='Graph switch', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=one_graph_max, command=apply).place(x=10,y=240)
     tk.Checkbutton(settings_root, text='Hide buttons', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=hide_btn, command=apply).place(x=10,y=270)
-    tk.Checkbutton(settings_root, text='Invert graph', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=invert_graph, command=apply).place(x=10,y=270)
+    tk.Checkbutton(settings_root, text='Hide dot info on leave', fg='white', bg='#1b1b1b', selectcolor='#1b1b1b', font=('Arial',10), variable=hide_dot_info, command=apply).place(x=10,y=270)
 
     cust_btn = tk.Button(settings_root, text='Customization', fg='white', bg='#1b1b1b', command=colorsettings)
     cust_btn.place(x=420,y=460)
@@ -670,6 +684,9 @@ if __name__ == '__main__':
     delete_graph = tk.Button(root, text='Delete graph', bg='#1b1b1b', fg='white', command=lambda: delete(index))
 
     submit.place(x=0,y=0)
+
+    dot_info = tk.Label(root, text='', bg='#1b1b1b', fg='white', justify="left")
+    dot_info.place(x=5, y=5)
 
     root.bind("<Configure>", update_widjets)
 
