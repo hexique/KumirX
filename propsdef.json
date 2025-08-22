@@ -10,6 +10,7 @@
     "error_graph": true,
     "one_graph_max": false,
     "hide_btn": false,
+    "hide_dot_info": false,
     "bg": "#323339",
     "graphcol": "#ffffff",
     "linecol": "#393a41",
